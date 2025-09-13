@@ -11,8 +11,6 @@ import java.util.Objects;
  */
 public class ChessPosition {
 
-    private static int[] rowNums = {1,2,3,4,5,6,7,8};
-    private static int[] colNums = {1,2,3,4,5,6,7,8};
     private int row;
     private int col;
 
