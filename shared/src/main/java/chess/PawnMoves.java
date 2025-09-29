@@ -26,7 +26,7 @@ public class PawnMoves {
 
         // forward 2
             ChessPosition twoForward = new ChessPosition(row + 2 * direction, col);
-            if (row == startRow && board.getPiece(twoForward) == null) {
+            if (row == startRow && board.getPiece(twoForward) == null && board.getPiece(oneForward) == null) {
                 moves.add(new ChessMove(myPosition, twoForward, null));
             }
         }
