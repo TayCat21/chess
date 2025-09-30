@@ -1,6 +1,8 @@
 package chess;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 
 /**
  * For a class that can manage a chess game, making moves on a board
@@ -11,9 +13,11 @@ import java.util.Collection;
 public class ChessGame {
 
     private TeamColor turnColor;
+    private ChessBoard board;
 
     public ChessGame() {
-
+        board = new ChessBoard();
+        setTeamTurn(TeamColor.WHITE);
     }
 
     /**
@@ -48,7 +52,18 @@ public class ChessGame {
      * startPosition
      */
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
-        throw new RuntimeException("Not implemented");
+        ChessPiece myPiece = board.getPiece(startPosition);
+        if (myPiece == null) {
+            return null;
+        }
+
+        Collection<ChessMove> possibleMoves = myPiece.pieceMoves(board, startPosition);
+        Collection<ChessMove> legalMoves = new HashSet<>();
+
+        
+
+        return legalMoves;
+
     }
 
     /**
@@ -98,7 +113,7 @@ public class ChessGame {
      * @param board the new board to use
      */
     public void setBoard(ChessBoard board) {
-        throw new RuntimeException("Not implemented");
+        this.board = board;
     }
 
     /**
@@ -107,6 +122,9 @@ public class ChessGame {
      * @return the chessboard
      */
     public ChessBoard getBoard() {
-        throw new RuntimeException("Not implemented");
+        return board;
     }
+
+    // generate equals and hashcode here
+
 }
