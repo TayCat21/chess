@@ -74,6 +74,19 @@ public class ChessBoard {
         }
     }
 
+    // Copy Board Constructor
+    public ChessBoard(ChessBoard ghost) {
+        this.board = new ChessPiece[8][8];
+        for (int row = 0; row < 8; row++) {
+            for (int col = 0; col < 8; col++) {
+                ChessPiece piece = ghost.board[row][col];
+                if (piece != null) {
+                    this.board[row][col] = new ChessPiece(piece);
+                }
+            }
+        }
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {

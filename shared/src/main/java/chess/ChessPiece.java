@@ -56,6 +56,12 @@ public class ChessPiece {
         return MovesCalculator.pieceMoves(this, board, myPosition);
     }
 
+    // Copy Piece Constructor
+    public ChessPiece(ChessPiece ghost) {
+        this.color = ghost.color;
+        this.type = ghost.type;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {

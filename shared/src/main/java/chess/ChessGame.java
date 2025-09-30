@@ -60,7 +60,10 @@ public class ChessGame {
         Collection<ChessMove> possibleMoves = myPiece.pieceMoves(board, startPosition);
         Collection<ChessMove> legalMoves = new HashSet<>();
 
-        
+//        for (ChessMove move : possibleMoves) {
+//            ChessBoard ghostBoard = new ChessBoard(board);
+//            ghostMove = makeMove()
+//        }
 
         return legalMoves;
 
