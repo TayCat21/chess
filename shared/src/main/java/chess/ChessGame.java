@@ -15,7 +15,6 @@ public class ChessGame {
 
     private TeamColor turnColor;
     private ChessBoard board;
-    Collection<ChessMove> validMoves = new HashSet<>();
 
     public ChessGame() {
         board = new ChessBoard();
@@ -60,15 +59,23 @@ public class ChessGame {
         }
 
         Collection<ChessMove> possibleMoves = myPiece.pieceMoves(board, startPosition);
+        Collection<ChessMove> validMoves = new HashSet<>();
 
-        // fake board to perform move to see if
-//        for (ChessMove move : possibleMoves) {
-//            ChessBoard ghostBoard = new ChessBoard(board);
-//            ghostMove = makeMove(move);
-//        }
+        for (ChessMove move : possibleMoves) {
+            ChessBoard fakeBoard = board.copy();
+            ChessPosition endPosition = move.getEndPosition();
+
+            board.addPiece(endPosition, myPiece);
+            board.addPiece(startPosition, null);
+
+            if (!isInCheck(myPiece.getTeamColor())) {
+                validMoves.add(move);
+            }
+
+            this.board = fakeBoard;
+        }
 
         return validMoves;
-
     }
 
     /**
@@ -79,12 +86,12 @@ public class ChessGame {
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
         boolean madeMove = false;
-        for (ChessMove possibleMove : validMoves) {
-            if (possibleMove.equals(move)) {
-                // perform move
-                madeMove = true;
-            }
-        }
+//        for (ChessMove possibleMove : validMoves) {
+//            if (possibleMove.equals(move)) {
+//                // perform move
+//                madeMove = true;
+//            }
+//        }
         if (!madeMove) {
             throw new InvalidMoveException(move + "is an Invalid Move");
         }
@@ -142,21 +149,6 @@ public class ChessGame {
         return board;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-        ChessGame chessGame = (ChessGame) o;
-        return turnColor == chessGame.turnColor && Objects.equals(board, chessGame.board) && Objects.equals(validMoves, chessGame.validMoves);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(turnColor, board, validMoves);
-    }
+    // generate hashcode
 
 }
