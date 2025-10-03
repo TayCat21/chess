@@ -1,6 +1,5 @@
 package chess;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Objects;
@@ -171,7 +170,7 @@ public class ChessGame {
      * @return True if the specified team is in checkmate
      */
     public boolean isInCheckmate(TeamColor teamColor) {
-        return isInCheck(teamColor) && isInStalemate(teamColor);
+        return isInCheck(teamColor) && !containsAnyValidMoves(teamColor);
     }
 
     /**
@@ -182,6 +181,10 @@ public class ChessGame {
      * @return True if the specified team is in stalemate, otherwise false
      */
     public boolean isInStalemate(TeamColor teamColor) {
+        return !isInCheck(teamColor) && !containsAnyValidMoves(teamColor);
+    }
+
+    public boolean containsAnyValidMoves(TeamColor teamColor) {
         for (int r = 1; r <= 8; r++) {
             for (int c = 1; c <= 8; c++) {
                 ChessPosition testPosition = new ChessPosition(r, c);
@@ -190,12 +193,12 @@ public class ChessGame {
                 if (testPiece != null && testPiece.getTeamColor() == teamColor) {
                     Collection<ChessMove> possibleMoves = validMoves(testPosition);
                     if (!possibleMoves.isEmpty()) {
-                        return false;
+                        return true;
                     }
                 }
             }
         }
-        return true;
+        return false;
     }
 
     /**

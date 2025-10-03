@@ -80,7 +80,7 @@ public class ChessBoard {
             for (int col = 0; col < 8; col++) {
                 ChessPiece piece = this.board[row][col];
                 if (piece != null) {
-                    clone.board[row][col] = piece;
+                    clone.board[row][col] = new ChessPiece(piece.getTeamColor(), piece.getPieceType());
                 }
             }
         }
