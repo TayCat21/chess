@@ -85,15 +85,37 @@ public class ChessGame {
      * @throws InvalidMoveException if move is invalid
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
-        boolean madeMove = false;
-//        for (ChessMove possibleMove : validMoves) {
-//            if (possibleMove.equals(move)) {
-//                // perform move
-//                madeMove = true;
-//            }
-//        }
-        if (!madeMove) {
-            throw new InvalidMoveException();
+        ChessPosition myPosition = move.getStartPosition();
+        ChessPiece myPiece = board.getPiece(myPosition);
+
+        if (myPiece == null) {
+            throw new InvalidMoveException("No piece found at this position");
+        }
+        if (myPiece.getTeamColor() != getTeamTurn()) {
+            throw new InvalidMoveException("Piece can't move out of turn");
+        }
+
+        Collection<ChessMove> possibleMoves = validMoves(myPosition);
+        if (possibleMoves == null) {
+            throw new InvalidMoveException("No valid moves can be made");
+        }
+
+        if (possibleMoves.contains(move)) {
+            if (move.getPromotionPiece() != null) {
+                myPiece = new ChessPiece(myPiece.getTeamColor(), move.getPromotionPiece());
+            }
+            board.addPiece(move.getEndPosition(), myPiece);
+            board.addPiece(myPosition, null);
+
+            if (getTeamTurn() == TeamColor.WHITE) {
+                setTeamTurn(TeamColor.BLACK);
+            }
+            else if (getTeamTurn() == TeamColor.BLACK) {
+                setTeamTurn(TeamColor.WHITE);
+            }
+        }
+        else {
+            throw new InvalidMoveException("Move not found in valid moves");
         }
     }
 
@@ -167,11 +189,10 @@ public class ChessGame {
 
                 if (testPiece != null && testPiece.getTeamColor() == teamColor) {
                     Collection<ChessMove> possibleMoves = validMoves(testPosition);
-                    if (possibleMoves.isEmpty()) {
+                    if (!possibleMoves.isEmpty()) {
                         return false;
                     }
                 }
-
             }
         }
         return true;
