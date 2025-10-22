@@ -2,12 +2,12 @@ package model;
 
 import java.util.Objects;
 
-public class userdata {
+public class Userdata {
     private final String username;
     private final String password;
     private final String email;
 
-    userdata(String username, String password, String email) {
+    Userdata(String username, String password, String email) {
 
         this.username = username;
         this.password = password;
@@ -34,7 +34,7 @@ public class userdata {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        userdata userdata = (userdata) o;
+        Userdata userdata = (Userdata) o;
         return Objects.equals(username, userdata.username) && Objects.equals(password, userdata.password) && Objects.equals(email, userdata.email);
     }
 

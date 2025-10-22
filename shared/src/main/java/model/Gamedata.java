@@ -4,14 +4,14 @@ import chess.ChessGame;
 
 import java.util.Objects;
 
-public class gamedata {
+public class Gamedata {
     private final int gameID;
     private final String whiteUsername;
     private final String blackUsername;
     private final String gameName;
     private final ChessGame game;
 
-    gamedata(int gameID, String whiteUsername, String blackUsername, String gameName, ChessGame game) {
+    Gamedata(int gameID, String whiteUsername, String blackUsername, String gameName, ChessGame game) {
 
         this.gameID = gameID;
         this.whiteUsername = whiteUsername;
@@ -48,7 +48,7 @@ public class gamedata {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        gamedata gamedata = (gamedata) o;
+        Gamedata gamedata = (Gamedata) o;
         return gameID == gamedata.gameID && Objects.equals(whiteUsername, gamedata.whiteUsername) && Objects.equals(blackUsername, gamedata.blackUsername) && Objects.equals(gameName, gamedata.gameName) && Objects.equals(game, gamedata.game);
     }
 

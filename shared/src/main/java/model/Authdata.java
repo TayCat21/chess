@@ -2,12 +2,12 @@ package model;
 
 import java.util.Objects;
 
-public class authdata {
+public class Authdata {
 
     private final String authToken;
     private final String username;
 
-    authdata(String authToken, String username) {
+    Authdata(String authToken, String username) {
 
         this.authToken = authToken;
         this.username = username;
@@ -30,7 +30,7 @@ public class authdata {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        authdata authdata = (authdata) o;
+        Authdata authdata = (Authdata) o;
         return Objects.equals(authToken, authdata.authToken) && Objects.equals(username, authdata.username);
     }
 

@@ -5,11 +5,13 @@ import io.javalin.*;
 public class Server {
 
     private final Javalin javalin;
+    UserHandler userHandler;
 
     public Server() {
         javalin = Javalin.create(config -> config.staticFiles.add("web"));
 
         // Register your endpoints and exception handlers here.
+        javalin.post("/user", userHandler::register);
 
     }
 
