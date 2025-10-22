@@ -9,5 +9,5 @@ public record Authdata(String authToken, String username) {
     public String getUsername() {
         return username;
     }
-    
+
 }

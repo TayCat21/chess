@@ -16,14 +16,16 @@ public class UserHandler {
         this.userService = userService;
     }
 
+    //register(RegisterRequest) Handler --> Service
     public void register(@NotNull Context context) {
-        Userdata userdata = new Gson().fromJson(context.body(), Userdata.class);
+        Userdata requestBody = new Gson().fromJson(context.body(), Userdata.class);
 
-        if (userdata.getUsername() == null || userdata.getPassword() == null) {
+        if (requestBody.username() == null || requestBody.password() == null) {
             throw new BadRequestResponse("Username or Password returned null");
         }
 
-        Authdata authdata = userService.addUser(userdata);
+        // getUser(username) Service --> Data Access
+        Userdata getUserResult = userService.getUser(requestBody.username());
 
 
     }
