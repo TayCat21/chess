@@ -23,8 +23,8 @@ public class UserHandler {
             throw new BadRequestResponse("Username or Password returned null");
         }
 
-        try {
-            Authdata authdata = userService.addUser(userdata);
-        }
+        Authdata authdata = userService.addUser(userdata);
+
+
     }
 }
