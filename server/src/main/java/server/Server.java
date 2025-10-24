@@ -1,12 +1,14 @@
 package server;
 
 import io.javalin.*;
+import service.UserService;
 
 public class Server {
 
     private final Javalin javalin;
-    UserHandler userHandler;
-    ExceptionHandler exceptionHandler;
+    UserService userService = new UserService();
+    UserHandler userHandler = new UserHandler(userService);
+    ExceptionHandler exceptionHandler = new ExceptionHandler();
 
     public Server() {
         javalin = Javalin.create(config -> config.staticFiles.add("web"));

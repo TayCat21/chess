@@ -5,8 +5,8 @@ import model.*;
 import java.util.UUID;
 
 public class UserService {
-	MemoryUserDataAccess userDataAccess;
-	MemoryAuthDataAccess authDataAccess;
+	MemoryUserDataAccess userDataAccess = new MemoryUserDataAccess();
+	MemoryAuthDataAccess authDataAccess = new MemoryAuthDataAccess();
 
 	public RegisterResult register(RegisterRequest registerRequest) throws DataAccessException {
 
