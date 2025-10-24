@@ -1,12 +1,12 @@
 package server;
 
 import com.google.gson.Gson;
+import dataaccess.DataAccessException;
 import io.javalin.http.BadRequestResponse;
 import io.javalin.http.Context;
-import model.Authdata;
 import model.Userdata;
 import org.jetbrains.annotations.NotNull;
-import service.UserService;
+import service.*;
 
 public class UserHandler {
 
@@ -17,16 +17,16 @@ public class UserHandler {
     }
 
     //register(RegisterRequest) Handler --> Service
-    public void register(@NotNull Context context) {
-        Userdata requestBody = new Gson().fromJson(context.body(), Userdata.class);
+    public String register(@NotNull Context context) throws DataAccessException {
+        var serializer = new Gson();
+        RegisterRequest requestBody = serializer.fromJson(context.body(), RegisterRequest.class);
 
         if (requestBody.username() == null || requestBody.password() == null) {
             throw new BadRequestResponse("Username or Password returned null");
         }
 
-        // getUser(username) Service --> Data Access
-        Userdata getUserResult = userService.getUser(requestBody.username());
+         RegisterResult resultBody = userService.register(requestBody);
 
-
+        return serializer.toJson(resultBody);
     }
 }

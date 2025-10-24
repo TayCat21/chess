@@ -6,6 +6,7 @@ public class Server {
 
     private final Javalin javalin;
     UserHandler userHandler;
+    ExceptionHandler exceptionHandler;
 
     public Server() {
         javalin = Javalin.create(config -> config.staticFiles.add("web"));
@@ -13,7 +14,7 @@ public class Server {
         // Server --> Handler
         javalin.post("/user", userHandler::register);
 
-        javalin.exception(Exception.class, ExceptionHandler:exceptions);
+        javalin.exception(Exception.class, exceptionHandler::exceptions);
 
     }
 

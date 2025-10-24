@@ -1,9 +1,12 @@
 package dataaccess;
+import model.Userdata;
 
 public interface UserDataAccess {
 
-    void getUser(String username);
+    default Userdata getUser(String username) throws DataAccessException {
+        return null;
+    }
 
-    void addUser(UserData u) throws DataAccessException;
+    void addUser(Userdata u) throws DataAccessException;
 
 }

@@ -1,24 +1,29 @@
 package service;
 
-import model.*;
+import dataaccess.DataAccessException;
+import dataaccess.*;
+import io.javalin.http.BadRequestResponse;
+import kotlin.io.AccessDeniedException;
+import model.Userdata;
 
 public class UserService {
+	MemoryUserDataAccess userDataAccess;
 
-    public model.Userdata getUser(String username) {
-        // call DAO?
-        return userdata;
-    }
+	public RegisterResult register(RegisterRequest registerRequest) {
+		try {
+			Userdata existingUser = userDataAccess.getUser(registerRequest.username());
+			throw new DataAccessException("Username Already Taken");
+		}
+		catch(DataAccessException e) {
 
-    public model.Authdata addUser(Userdata userdata) {
+		}
 
-        return authdata;
-    }
+		return
+	};
+
+//	public LoginResult login(LoginRequest loginRequest) {
+//		return LoginResult;
+//	};
+//
+//	public void logout(LogoutRequest logoutRequest) {}
 }
-
-/*
-public class UserService {
-	public RegisterResult register(RegisterRequest registerRequest) {}
-	public LoginResult login(LoginRequest loginRequest) {}
-	public void logout(LogoutRequest logoutRequest) {}
-}
- */
