@@ -5,7 +5,7 @@ import java.util.HashSet;
 
 public class MemoryUserDataAccess implements UserDataAccess {
 
-    private HashSet<Userdata> userBank;
+    private final HashSet<Userdata> userBank;
 
     public MemoryUserDataAccess() {
         userBank = HashSet.newHashSet(16);
@@ -18,11 +18,14 @@ public class MemoryUserDataAccess implements UserDataAccess {
                 return user;
             }
         }
-        throw new DataAccessException("Couldn't find User: " + username);
-    };
+        return null;
+        //throw new DataAccessException("Couldn't find User: " + username);
+    }
 
     @Override
-    public void addUser(Userdata newUser) throws DataAccessException {
+    public void addUser(String username, String password, String email) {
+        Userdata newUser = new Userdata(username, password, email);
+        userBank.add(newUser);
+    }
 
-    };
 }

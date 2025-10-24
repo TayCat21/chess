@@ -3,10 +3,8 @@ import model.Userdata;
 
 public interface UserDataAccess {
 
-    default Userdata getUser(String username) throws DataAccessException {
-        return null;
-    }
+    Userdata getUser(String username) throws DataAccessException;
 
-    void addUser(Userdata u) throws DataAccessException;
+    void addUser(String username, String password, String email);
 
 }

@@ -1,29 +1,31 @@
 package service;
 
-import dataaccess.DataAccessException;
 import dataaccess.*;
-import io.javalin.http.BadRequestResponse;
-import kotlin.io.AccessDeniedException;
-import model.Userdata;
+import model.*;
+import java.util.UUID;
 
 public class UserService {
 	MemoryUserDataAccess userDataAccess;
+	MemoryAuthDataAccess authDataAccess;
 
-	public RegisterResult register(RegisterRequest registerRequest) {
-		try {
-			Userdata existingUser = userDataAccess.getUser(registerRequest.username());
+	public RegisterResult register(RegisterRequest registerRequest) throws DataAccessException {
+
+		Userdata existingUser = userDataAccess.getUser(registerRequest.username());
+		if (existingUser != null) {
 			throw new DataAccessException("Username Already Taken");
 		}
-		catch(DataAccessException e) {
 
-		}
+		userDataAccess.addUser(registerRequest.username(), registerRequest.password(), registerRequest.email());
+		String authToken = UUID.randomUUID().toString();
+		authDataAccess.makeAuth(authToken, registerRequest.username());
 
-		return
-	};
+		return new RegisterResult(authToken, registerRequest.username());
+
+	}
 
 //	public LoginResult login(LoginRequest loginRequest) {
 //		return LoginResult;
-//	};
+//	}
 //
 //	public void logout(LogoutRequest logoutRequest) {}
 }
