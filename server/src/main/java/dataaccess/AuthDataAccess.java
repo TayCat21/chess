@@ -7,4 +7,5 @@ public interface AuthDataAccess {
 
     void makeAuth(String authToken, String username);
 
+    void deleteAuth(String authToken);
 }

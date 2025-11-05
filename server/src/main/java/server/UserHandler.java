@@ -3,7 +3,6 @@ package server;
 import com.google.gson.Gson;
 import dataaccess.DataAccessException;
 import io.javalin.http.Context;
-import model.Userdata;
 import org.jetbrains.annotations.NotNull;
 import service.*;
 
@@ -38,5 +37,18 @@ public class UserHandler {
 
         LoginResult resultBody = userService.login(requestBody);
         ResponseUtil.success(context, resultBody);
+    }
+
+    public void logout(@NotNull Context context) throws DataAccessException {
+        String authToken = context.header("authorization");
+
+        if (authToken == null || authToken.isEmpty()) {
+            throw new DataAccessException("unauthorized");
+        }
+
+        LogoutRequest request = new LogoutRequest(authToken);
+
+        userService.logout(request);
+        ResponseUtil.success(context);
     }
 }

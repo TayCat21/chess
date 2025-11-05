@@ -9,4 +9,8 @@ public class ResponseUtil {
         context.json(result);
     }
 
+    public static void success(Context context) {
+        context.status(200);
+    }
+
 }

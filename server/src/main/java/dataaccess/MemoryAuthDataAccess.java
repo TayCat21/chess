@@ -19,13 +19,17 @@ public class MemoryAuthDataAccess implements AuthDataAccess {
             }
         }
         return null;
-        //throw new DataAccessException("Couldn't find authToken: " + authToken);
     }
 
     @Override
     public void makeAuth(String authToken, String username) {
         Authdata newAuth = new Authdata(authToken, username);
         tokenBank.add(newAuth);
+    }
+
+    @Override
+    public void deleteAuth(String authToken) {
+        tokenBank.removeIf(token -> token.authToken().equals(authToken));
     }
 
 }

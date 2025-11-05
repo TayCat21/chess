@@ -19,7 +19,6 @@ public class MemoryUserDataAccess implements UserDataAccess {
             }
         }
         return null;
-        //throw new DataAccessException("Couldn't find User: " + username);
     }
 
     @Override
