@@ -1,6 +1,7 @@
 package server;
 
 import io.javalin.*;
+import io.javalin.http.Context;
 import service.UserService;
 
 public class Server {
@@ -18,6 +19,8 @@ public class Server {
         javalin.post("/session", userHandler::login);
         javalin.delete("/session", userHandler::logout);
 
+        javalin.delete("/db", this::clear);
+
         javalin.exception(Exception.class, exceptionHandler::exceptions);
 
     }
@@ -29,5 +32,11 @@ public class Server {
 
     public void stop() {
         javalin.stop();
+    }
+
+    public void clear(Context context) {
+        userService.clear();
+        //gameService.clear();
+        ResponseUtil.success(context);
     }
 }

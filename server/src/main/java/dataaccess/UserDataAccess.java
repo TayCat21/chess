@@ -7,4 +7,5 @@ public interface UserDataAccess {
 
     void addUser(String username, String password, String email);
 
+    void clear();
 }

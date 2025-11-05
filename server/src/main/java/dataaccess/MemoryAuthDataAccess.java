@@ -32,4 +32,9 @@ public class MemoryAuthDataAccess implements AuthDataAccess {
         tokenBank.removeIf(token -> token.authToken().equals(authToken));
     }
 
+    @Override
+    public void clear() {
+        tokenBank.clear();
+    }
+
 }

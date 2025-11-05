@@ -27,4 +27,8 @@ public class MemoryUserDataAccess implements UserDataAccess {
         userBank.add(newUser);
     }
 
+    @Override
+    public void clear() {
+        userBank.clear();
+    }
 }

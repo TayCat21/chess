@@ -43,4 +43,9 @@ public class UserService {
 
 		authDataAccess.deleteAuth(logoutRequest.authToken());
 	}
+
+	public void clear() {
+		userDataAccess.clear();
+		authDataAccess.clear();
+	}
 }
