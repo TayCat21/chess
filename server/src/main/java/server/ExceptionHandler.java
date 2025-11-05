@@ -1,9 +1,6 @@
 package server;
 
 import com.google.gson.Gson;
-import io.javalin.http.BadRequestResponse;
-import io.javalin.http.ForbiddenResponse;
-import io.javalin.http.UnauthorizedResponse;
 import io.javalin.http.Context;
 import java.util.Map;
 
@@ -13,15 +10,12 @@ public class ExceptionHandler {
         int status = 500;
         String message = "Error: " + e.getMessage();
 
-        if (e instanceof BadRequestResponse) {
+        if (e.getMessage().equals("bad request")) {
             status = 400;
-            message = "Error: Bad request";
-        } else if (e instanceof UnauthorizedResponse) {
+        } else if (e.getMessage().equals("unauthorized")) {
             status = 401;
-            message = "Error: Unauthorized";
-        } else if (e instanceof ForbiddenResponse) {
+        } else if (e.getMessage().equals("already taken")) {
             status = 403;
-            message = "Error: already taken";
         }
 
         var body = new Gson().toJson(Map.of("message", message, "success", false));

@@ -12,14 +12,14 @@ public class UserService {
 
 		Userdata existingUser = userDataAccess.getUser(registerRequest.username());
 		if (existingUser != null) {
-			throw new DataAccessException("Username Already Taken");
+			throw new DataAccessException("already taken");
 		}
 
 		userDataAccess.addUser(registerRequest.username(), registerRequest.password(), registerRequest.email());
 		String authToken = UUID.randomUUID().toString();
 		authDataAccess.makeAuth(authToken, registerRequest.username());
 
-		return new RegisterResult(authToken, registerRequest.username());
+		return new RegisterResult(registerRequest.username(), authToken);
 
 	}
 
