@@ -27,4 +27,16 @@ public class UserHandler {
         RegisterResult resultBody = userService.register(requestBody);
         ResponseUtil.success(context, resultBody);
     }
+
+    public void login(@NotNull Context context) throws DataAccessException {
+        var serializer = new Gson();
+        LoginRequest requestBody = serializer.fromJson(context.body(), LoginRequest.class);
+
+        if (requestBody.username() == null || requestBody.password() == null) {
+            throw new DataAccessException("bad request");
+        }
+
+        LoginResult resultBody = userService.login(requestBody);
+        ResponseUtil.success(context, resultBody);
+    }
 }

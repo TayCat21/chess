@@ -23,9 +23,17 @@ public class UserService {
 
 	}
 
-//	public LoginResult login(LoginRequest loginRequest) {
-//		return LoginResult;
-//	}
+	public LoginResult login(LoginRequest loginRequest) throws DataAccessException {
+		Userdata existingUser = userDataAccess.getUser(loginRequest.username());
+		if (existingUser == null) {
+			throw new DataAccessException("unauthorized");
+		}
+
+		String authToken = UUID.randomUUID().toString();
+		authDataAccess.makeAuth(authToken, loginRequest.username());
+
+		return new LoginResult(loginRequest.username(), authToken);
+	}
 //
 //	public void logout(LogoutRequest logoutRequest) {}
 }

@@ -15,6 +15,7 @@ public class Server {
 
         // Server --> Handler
         javalin.post("/user", userHandler::register);
+        javalin.post("/session", userHandler::login);
 
         javalin.exception(Exception.class, exceptionHandler::exceptions);
 
