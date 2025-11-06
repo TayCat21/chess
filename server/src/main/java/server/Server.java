@@ -3,12 +3,15 @@ package server;
 import io.javalin.*;
 import io.javalin.http.Context;
 import service.UserService;
+import service.GameService;
 
 public class Server {
 
     private final Javalin javalin;
     UserService userService = new UserService();
     UserHandler userHandler = new UserHandler(userService);
+    GameService gameService = new GameService();
+    GameHandler gameHandler = new GameHandler(gameService);
     ExceptionHandler exceptionHandler = new ExceptionHandler();
 
     public Server() {
@@ -18,6 +21,8 @@ public class Server {
         javalin.post("/user", userHandler::register);
         javalin.post("/session", userHandler::login);
         javalin.delete("/session", userHandler::logout);
+
+        javalin.post("/game", gameHandler::createGame);
 
         javalin.delete("/db", this::clear);
 
