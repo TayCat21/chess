@@ -2,12 +2,17 @@ package dataaccess;
 
 import chess.ChessGame;
 import model.Gamedata;
+import service.ListGamesItem;
+
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 
 public class MemoryGameDataAccess implements GameDataAccess {
 
     private final HashSet<Gamedata> gameBank;
-    private int idCounter = 0;
+    private int idCounter = 1;
+    private final List<ListGamesItem> gamesList = new ArrayList<>();
 
     public MemoryGameDataAccess() {
         gameBank = HashSet.newHashSet(16);
@@ -36,8 +41,17 @@ public class MemoryGameDataAccess implements GameDataAccess {
     }
 
     @Override
-    public void listGames() {
+    public List<ListGamesItem> listGames() {
+        if (!gamesList.isEmpty()) {
+        gamesList.clear();
+        }
 
+        for (Gamedata game : gameBank) {
+            ListGamesItem listItem = new ListGamesItem(game.gameID(), game.whiteUsername(),
+                    game.blackUsername(), game.getGameName());
+            gamesList.add(listItem);
+        }
+        return gamesList;
     }
 
     @Override

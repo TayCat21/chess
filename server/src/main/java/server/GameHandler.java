@@ -18,10 +18,7 @@ public class GameHandler {
 
     public void createGame(@NotNull Context context) throws DataAccessException {
         String authToken = context.header("authorization");
-
-        if (authToken == null || authToken.isEmpty()) {
-            throw new DataAccessException("unauthorized");
-        }
+        authenticateToken(authToken);
 
         var serializer = new Gson();
         CreateGameRequest requestBody;
@@ -37,5 +34,20 @@ public class GameHandler {
 
         CreateGameResult resultBody = gameService.createGame(authToken, requestBody);
         ResponseUtil.success(context, resultBody);
+    }
+
+    public void listGames(@NotNull Context context) throws DataAccessException {
+        String authToken = context.header("authorization");
+        authenticateToken(authToken);
+
+        ListGamesResult resultBody = gameService.listGames(authToken);
+        ResponseUtil.success(context, resultBody);
+    }
+
+
+    public void authenticateToken(String authToken) throws DataAccessException {
+        if (authToken == null || authToken.isEmpty()) {
+            throw new DataAccessException("unauthorized");
+        }
     }
 }
