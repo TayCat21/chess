@@ -24,9 +24,14 @@ public class GameHandler {
         }
 
         var serializer = new Gson();
-        CreateGameRequest requestBody = serializer.fromJson(context.body(), CreateGameRequest.class);
+        CreateGameRequest requestBody;
+        try {
+            requestBody = serializer.fromJson(context.body(), CreateGameRequest.class);
+        } catch (Exception e) {
+            throw new DataAccessException("bad request");
+        }
 
-        if (requestBody.gameName() == null) {
+        if (requestBody == null || requestBody.gameName() == null || requestBody.gameName().isEmpty()) {
             throw new DataAccessException("bad request");
         }
 

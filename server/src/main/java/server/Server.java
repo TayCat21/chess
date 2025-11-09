@@ -1,5 +1,6 @@
 package server;
 
+import dataaccess.*;
 import io.javalin.*;
 import io.javalin.http.Context;
 import service.UserService;
@@ -8,9 +9,14 @@ import service.GameService;
 public class Server {
 
     private final Javalin javalin;
-    UserService userService = new UserService();
+    MemoryAuthDataAccess authDAO = new MemoryAuthDataAccess();
+    MemoryUserDataAccess userDAO = new MemoryUserDataAccess();
+    MemoryGameDataAccess gameDAO = new MemoryGameDataAccess();
+
+    UserService userService = new UserService(authDAO, userDAO);
+    GameService gameService = new GameService(authDAO, gameDAO);
+
     UserHandler userHandler = new UserHandler(userService);
-    GameService gameService = new GameService();
     GameHandler gameHandler = new GameHandler(gameService);
     ExceptionHandler exceptionHandler = new ExceptionHandler();
 
@@ -41,7 +47,7 @@ public class Server {
 
     public void clear(Context context) {
         userService.clear();
-        //gameService.clear();
+        gameService.clear();
         ResponseUtil.success(context);
     }
 }

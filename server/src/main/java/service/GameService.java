@@ -1,13 +1,16 @@
 package service;
 
-import dataaccess.DataAccessException;
-import dataaccess.MemoryAuthDataAccess;
-import model.Authdata;
-
-import java.util.UUID;
+import dataaccess.*;
+import model.*;
 
 public class GameService {
-    MemoryAuthDataAccess authDataAccess = new MemoryAuthDataAccess();
+    private final AuthDataAccess authDataAccess;
+    private final GameDataAccess gameDataAccess;
+
+    public GameService(AuthDataAccess authDataAccess, GameDataAccess gameDataAccess) {
+        this.authDataAccess = authDataAccess;
+        this.gameDataAccess = gameDataAccess;
+    }
 
     public CreateGameResult createGame(String authToken, CreateGameRequest createGameRequest) throws DataAccessException {
 
@@ -16,9 +19,12 @@ public class GameService {
             throw new DataAccessException("unauthorized");
         }
 
-        String gameID = UUID.randomUUID().toString();
-        authDataAccess.makeAuth(authToken, loginRequest.username());
+        int gameID = gameDataAccess.createGame(createGameRequest.gameName());
 
-        return new LoginResult(loginRequest.username(), authToken);
+        return new CreateGameResult(gameID);
+    }
+
+    public void clear() {
+        gameDataAccess.clear();
     }
 }
