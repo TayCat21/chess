@@ -57,28 +57,27 @@ public class MemoryGameDataAccess implements GameDataAccess {
     @Override
     public void updateGame(ChessGame.TeamColor color, String username, int gameID) throws DataAccessException {
         Gamedata myGame = getGame(gameID);
-        switch (color) {
-            case ChessGame.TeamColor.WHITE -> {
-                if (myGame.whiteUsername() == null) {
-                    Gamedata myNewGame = new Gamedata(gameID, username, myGame.blackUsername(),
-                            myGame.gameName(), myGame.game());
-                    gameBank.add(myNewGame);
-                } else {
-                    throw new DataAccessException("already taken");
-                }
-            }
-            case ChessGame.TeamColor.BLACK -> {
-                if (myGame.blackUsername() == null) {
-                    Gamedata myNewGame = new Gamedata(gameID, myGame.whiteUsername(), username,
-                            myGame.gameName(), myGame.game());
-                    gameBank.add(myNewGame);
-                } else {
-                    throw new DataAccessException("already taken");
-                }
-            }
-            default ->
-                throw new DataAccessException("color selection error");
+        if (myGame == null) {
+            throw new DataAccessException("bad request");
+        }
 
+        if (color == ChessGame.TeamColor.WHITE) {
+            if (myGame.whiteUsername() == null) {
+                Gamedata myNewGame = new Gamedata(gameID, username, myGame.blackUsername(),
+                        myGame.gameName(), myGame.game());
+                gameBank.add(myNewGame);
+            } else {
+                throw new DataAccessException("already taken");
+            }
+        }
+        else if (color == ChessGame.TeamColor.BLACK) {
+            if (myGame.blackUsername() == null) {
+                Gamedata myNewGame = new Gamedata(gameID, myGame.whiteUsername(), username,
+                        myGame.gameName(), myGame.game());
+                gameBank.add(myNewGame);
+            } else {
+                throw new DataAccessException("already taken");
+            }
         }
 
         gameBank.remove(myGame);
