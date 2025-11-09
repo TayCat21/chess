@@ -28,6 +28,12 @@ public class GameService {
         return new ListGamesResult(gamesList);
     }
 
+    public void joinGame(String authToken, JoinGameRequest joinGameRequest) throws DataAccessException {
+        authenticateToken(authToken);
+        String username = authDataAccess.getAuth(authToken).username();
+        gameDataAccess.updateGame(joinGameRequest.playerColor(), username, joinGameRequest.gameID());
+    }
+
     public void clear() {
         gameDataAccess.clear();
     }

@@ -8,6 +8,14 @@ public record Gamedata(int gameID, String whiteUsername, String blackUsername, S
         return gameID;
     }
 
+    public String getGameName() {
+        return gameName;
+    }
+
+    public ChessGame getGame() {
+        return game;
+    }
+
     public String getWhiteUsername() {
         return whiteUsername;
     }
@@ -16,12 +24,5 @@ public record Gamedata(int gameID, String whiteUsername, String blackUsername, S
         return blackUsername;
     }
 
-    public String getGameName() {
-        return gameName;
-    }
-
-    public ChessGame getGame() {
-        return game;
-    }
 
 }

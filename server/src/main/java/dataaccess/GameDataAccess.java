@@ -1,7 +1,10 @@
 package dataaccess;
 
 import model.Gamedata;
+import chess.ChessGame;
 import service.ListGamesItem;
+
+import javax.xml.crypto.Data;
 import java.util.List;
 
 public interface GameDataAccess {
@@ -11,7 +14,7 @@ public interface GameDataAccess {
 
     List<ListGamesItem> listGames();
 
-    void updateGame(String gameID);
+    void updateGame(ChessGame.TeamColor color, String username, int gameID) throws DataAccessException;
 
     void clear();
 }

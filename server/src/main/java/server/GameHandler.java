@@ -3,7 +3,6 @@ package server;
 import com.google.gson.Gson;
 import dataaccess.DataAccessException;
 import io.javalin.http.Context;
-import model.Authdata;
 import org.jetbrains.annotations.NotNull;
 import service.*;
 import dataaccess.*;
@@ -42,6 +41,27 @@ public class GameHandler {
 
         ListGamesResult resultBody = gameService.listGames(authToken);
         ResponseUtil.success(context, resultBody);
+    }
+
+    public void joinGame(@NotNull Context context) throws DataAccessException {
+        String authToken = context.header("authorization");
+        authenticateToken(authToken);
+
+
+        var serializer = new Gson();
+        JoinGameRequest requestBody;
+        try {
+            requestBody = serializer.fromJson(context.body(), JoinGameRequest.class);
+        } catch (Exception e) {
+            throw new DataAccessException("bad request");
+        }
+
+        if (requestBody == null || requestBody.playerColor() == null) {
+            throw new DataAccessException("bad request");
+        }
+
+        gameService.joinGame(authToken, requestBody);
+        ResponseUtil.success(context);
     }
 
 
