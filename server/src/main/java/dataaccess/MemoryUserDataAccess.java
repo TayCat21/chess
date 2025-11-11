@@ -8,7 +8,7 @@ public class MemoryUserDataAccess implements UserDataAccess {
     private final HashSet<Userdata> userBank;
 
     public MemoryUserDataAccess() {
-        userBank = HashSet.newHashSet(16);
+        userBank = new HashSet<>();
     }
 
     @Override

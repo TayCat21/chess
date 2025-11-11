@@ -8,7 +8,7 @@ public class MemoryAuthDataAccess implements AuthDataAccess {
     private final HashSet<Authdata> tokenBank;
 
     public MemoryAuthDataAccess() {
-        tokenBank = HashSet.newHashSet(16);
+        tokenBank = new HashSet<>();
     }
 
     @Override
