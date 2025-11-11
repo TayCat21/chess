@@ -147,20 +147,29 @@ public class ChessGame {
         }
         for (int r = 1; r <= 8; r++) {
             for (int c = 1; c <= 8; c++) {
-                ChessPosition testPosition = new ChessPosition(r, c);
-                ChessPiece testPiece = board.getPiece(testPosition);
+                ChessPosition testPos = new ChessPosition(r, c);
+                ChessPiece testPiece = board.getPiece(testPos);
 
-                if (testPiece != null && testPiece.getTeamColor() != teamColor) {
-                    for (ChessMove opponentMove : testPiece.pieceMoves(board, testPosition)) {
-                        ChessPosition endPosition = opponentMove.getEndPosition();
-                        if (endPosition.equals(kingPosition)) {
-                            return true;
-                        }
-                    }
+                if (isOpponentPiece(testPiece, teamColor) && canAttackKing(board, testPiece, testPos, kingPosition)) {
+                    return true;
                 }
             }
         }
 
+        return false;
+    }
+
+    private boolean isOpponentPiece(ChessPiece piece, ChessGame.TeamColor teamColor) {
+        return piece != null && piece.getTeamColor() != teamColor;
+    }
+
+    private boolean canAttackKing(ChessBoard board, ChessPiece piece, ChessPosition testPos, ChessPosition kingPos) {
+        for (ChessMove opponentMove : piece.pieceMoves(board, testPos)) {
+            ChessPosition endPosition = opponentMove.getEndPosition();
+            if (endPosition.equals(kingPos)) {
+                return true;
+            }
+        }
         return false;
     }
 

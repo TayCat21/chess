@@ -23,7 +23,7 @@ class GameServiceTest {
     }
 
     @Test
-    void createGame_positive() throws DataAccessException {
+    void createGamePositive() throws DataAccessException {
         CreateGameRequest req = new CreateGameRequest("myGameName");
         CreateGameResult result = gameService.createGame(validAuthToken, req);
         assertNotNull(result);
@@ -31,14 +31,14 @@ class GameServiceTest {
     }
 
     @Test
-    void createGame_invalidToken() {
+    void createGameInvalidToken() {
         CreateGameRequest req = new CreateGameRequest("myGameName");
         assertThrows(DataAccessException.class, () ->
                 gameService.createGame("badToken", req));
     }
 
     @Test
-    void listGames_positive() throws DataAccessException {
+    void listGamesPositive() throws DataAccessException {
         CreateGameRequest req = new CreateGameRequest("myListGame");
         gameService.createGame(validAuthToken, req);
 
@@ -49,20 +49,20 @@ class GameServiceTest {
     }
 
     @Test
-    void listGames_invalidToken() {
+    void listGamesInvalidToken() {
         assertThrows(DataAccessException.class, () ->
                 gameService.listGames("badToken"));
     }
 
     @Test
-    void joinGame_positive() throws DataAccessException {
+    void joinGamePositive() throws DataAccessException {
         int gameId = gameService.createGame(validAuthToken, new CreateGameRequest("myJoinGame")).gameID();
         JoinGameRequest joinRequest = new JoinGameRequest(ChessGame.TeamColor.WHITE, gameId);
         assertDoesNotThrow(() -> gameService.joinGame(validAuthToken, joinRequest));
     }
 
     @Test
-    void joinGame_invalidToken() {
+    void joinGameInvalidToken() {
         JoinGameRequest joinRequest = new JoinGameRequest(ChessGame.TeamColor.BLACK, 1);
         assertThrows(DataAccessException.class, () ->
                 gameService.joinGame("badToken", joinRequest));
@@ -78,12 +78,12 @@ class GameServiceTest {
     }
 
     @Test
-    void authenticateToken_positive() {
+    void authenticateTokenPositive() {
         assertDoesNotThrow(() -> gameService.authenticateToken(validAuthToken));
     }
 
     @Test
-    void authenticateToken_invalidToken() {
+    void authenticateTokenInvalidToken() {
         assertThrows(DataAccessException.class, () ->
                 gameService.authenticateToken("badToken"));
     }

@@ -20,7 +20,7 @@ class UserServiceTest {
 
 
     @Test
-    void register_positive() throws DataAccessException {
+    void registerPositive() throws DataAccessException {
         RegisterRequest req = new RegisterRequest("myUsername", "myPassword", "email@fakemail.com");
         RegisterResult res = userService.register(req);
 
@@ -32,7 +32,7 @@ class UserServiceTest {
     }
 
     @Test
-    void register_AlreadyTaken() throws DataAccessException {
+    void registerAlreadyTaken() throws DataAccessException {
         RegisterRequest req = new RegisterRequest("bob", "pass", "bob@example.com");
         userService.register(req);
 
@@ -43,7 +43,7 @@ class UserServiceTest {
     }
 
     @Test
-    void login_positive() throws DataAccessException {
+    void loginPositive() throws DataAccessException {
         RegisterRequest req = new RegisterRequest("anotherUser", "pass", "user@fakemail.com");
         userService.register(req);
 
@@ -55,7 +55,7 @@ class UserServiceTest {
     }
 
     @Test
-    void login_WrongPass() throws DataAccessException {
+    void loginWrongPass() throws DataAccessException {
         RegisterRequest req = new RegisterRequest("user123", "mine", "user123@fakemail.com");
         userService.register(req);
 
@@ -67,7 +67,7 @@ class UserServiceTest {
     }
 
     @Test
-    void login_NoUser() {
+    void loginNoUser() {
         LoginRequest badLogin = new LoginRequest("notUser", "notPass");
         DataAccessException e = assertThrows(DataAccessException.class, () ->
                 userService.login(badLogin)
@@ -76,7 +76,7 @@ class UserServiceTest {
     }
 
     @Test
-    void logout_positive() throws DataAccessException {
+    void logoutPositive() throws DataAccessException {
         RegisterRequest req = new RegisterRequest("myName", "myPass", "kitty@fakemail.com");
         RegisterResult res = userService.register(req);
 
@@ -87,7 +87,7 @@ class UserServiceTest {
     }
 
     @Test
-    void logout_InvalidToken() {
+    void logoutInvalidToken() {
         LogoutRequest badLogout = new LogoutRequest("badToken");
 
         DataAccessException e = assertThrows(DataAccessException.class, () ->
