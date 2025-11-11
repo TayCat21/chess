@@ -5,7 +5,6 @@ import dataaccess.DataAccessException;
 import io.javalin.http.Context;
 import org.jetbrains.annotations.NotNull;
 import service.*;
-import dataaccess.*;
 
 public class GameHandler {
 
@@ -32,15 +31,18 @@ public class GameHandler {
         }
 
         CreateGameResult resultBody = gameService.createGame(authToken, requestBody);
-        ResponseUtil.success(context, resultBody);
+        var json = serializer.toJson(resultBody);
+        ResponseUtil.success(context, json);
     }
 
     public void listGames(@NotNull Context context) throws DataAccessException {
         String authToken = context.header("authorization");
         authenticateToken(authToken);
-
         ListGamesResult resultBody = gameService.listGames(authToken);
-        ResponseUtil.success(context, resultBody);
+
+        var serializer = new Gson();
+        var json = serializer.toJson(resultBody);
+        ResponseUtil.success(context, json);
     }
 
     public void joinGame(@NotNull Context context) throws DataAccessException {

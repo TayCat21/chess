@@ -24,7 +24,8 @@ public class UserHandler {
         }
 
         RegisterResult resultBody = userService.register(requestBody);
-        ResponseUtil.success(context, resultBody);
+        var json = serializer.toJson(resultBody);
+        ResponseUtil.success(context, json);
     }
 
     public void login(@NotNull Context context) throws DataAccessException {
@@ -36,7 +37,8 @@ public class UserHandler {
         }
 
         LoginResult resultBody = userService.login(requestBody);
-        ResponseUtil.success(context, resultBody);
+        var json = serializer.toJson(resultBody);
+        ResponseUtil.success(context, json);
     }
 
     public void logout(@NotNull Context context) throws DataAccessException {
