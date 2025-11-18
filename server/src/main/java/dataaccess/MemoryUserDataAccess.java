@@ -12,7 +12,7 @@ public class MemoryUserDataAccess implements UserDataAccess {
     }
 
     @Override
-    public Userdata getUser(String username) throws DataAccessException {
+    public Userdata getUser(String username) {
         for (Userdata user : userBank) {
             if (user.username().equals(username)) {
                 return user;

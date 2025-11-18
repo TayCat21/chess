@@ -42,7 +42,7 @@ public class SQLGame implements GameDataAccess {
 
     }
 
-    private final String[] createStatements = {
+    private final String[] gameStatements = {
             """
             CREATE TABLE IF NOT EXISTS  game (
               `gameID` int NOT NULL AUTO_INCREMENT,
@@ -63,7 +63,7 @@ public class SQLGame implements GameDataAccess {
         }
 
         try (Connection conn = DatabaseManager.getConnection()) {
-            for (String statement : createStatements) {
+            for (String statement : gameStatements) {
                 try (var preparedStatement = conn.prepareStatement(statement)) {
                     preparedStatement.executeUpdate();
                 }

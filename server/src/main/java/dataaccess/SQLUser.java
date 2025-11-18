@@ -1,9 +1,8 @@
 package dataaccess;
 
 import model.Userdata;
+import java.sql.*;
 
-import java.sql.Connection;
-import java.sql.SQLException;
 
 public class SQLUser implements UserDataAccess {
 
@@ -18,8 +17,10 @@ public class SQLUser implements UserDataAccess {
     }
 
     @Override
-    public void addUser(String username, String password, String email) {
-
+    public void addUser(String username, String password, String email) throws DataAccessException {
+        Userdata newUser = new Userdata(username, password, email);
+        var statement = "INSERT INTO user (username, password, email) VALUES (?, ?, ?)";
+        DatabaseManager.updateDatabase(statement, newUser.username(), newUser.password(), newUser.email());
     }
 
     @Override
@@ -27,9 +28,9 @@ public class SQLUser implements UserDataAccess {
 
     }
 
-    private final String[] createStatements = {
+    private final String[] userStatements = {
             """
-            CREATE TABLE IF NOT EXISTS  auth (
+            CREATE TABLE IF NOT EXISTS  user (
               `username` varchar(256) NOT NULL,
               `password` varchar(256) NOT NULL,
               `email` varchar(256) NOT NULL,
@@ -46,7 +47,7 @@ public class SQLUser implements UserDataAccess {
         }
 
         try (Connection conn = DatabaseManager.getConnection()) {
-            for (String statement : createStatements) {
+            for (String statement : userStatements) {
                 try (var preparedStatement = conn.prepareStatement(statement)) {
                     preparedStatement.executeUpdate();
                 }
@@ -55,4 +56,5 @@ public class SQLUser implements UserDataAccess {
             throw new RuntimeException(e);
         }
     }
+
 }
