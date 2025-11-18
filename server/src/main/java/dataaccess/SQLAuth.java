@@ -1,9 +1,8 @@
 package dataaccess;
 
 import model.Authdata;
-
-import java.sql.Connection;
-import java.sql.SQLException;
+import com.google.gson.Gson;
+import java.sql.*;
 
 public class SQLAuth implements AuthDataAccess {
 
@@ -12,19 +11,19 @@ public class SQLAuth implements AuthDataAccess {
     }
 
     @Override
-    public Authdata getAuth(String authToken) {
+    public Authdata getAuth(String authToken) throws DataAccessException {
         try (Connection conn = DatabaseManager.getConnection()) {
-            var statement = "SELECT id, json FROM pet WHERE id=?";
+            var statement = "SELECT authToken, authToken FROM auth WHERE authToken=?";
             try (PreparedStatement ps = conn.prepareStatement(statement)) {
-                ps.setInt(1, id);
+                ps.setString(1, authToken);
                 try (ResultSet rs = ps.executeQuery()) {
                     if (rs.next()) {
-                        return readPet(rs);
+                        return readAuth(rs);
                     }
                 }
             }
         } catch (Exception e) {
-            throw new ResponseException(ResponseException.Code.ServerError, String.format("Unable to read data: %s", e.getMessage()));
+            throw new DataAccessException(String.format("Unable to read data: %s", e.getMessage()));
         }
         return null;
     }
@@ -72,5 +71,12 @@ public class SQLAuth implements AuthDataAccess {
         } catch (DataAccessException | SQLException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private Authdata readAuth(ResultSet rs) throws SQLException {
+        var username = rs.getString("username");
+        var authToken = rs.getString("authToken");
+        Authdata token = new Gson().fromJson(username, authToken);
+        return token;
     }
 }
