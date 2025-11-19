@@ -11,7 +11,11 @@ import java.util.List;
 public class SQLGame implements GameDataAccess {
 
     public SQLGame() {
-        setupDatabase();
+        try {
+            DatabaseManager.setupDatabase(gameStatements);
+        } catch (DataAccessException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
@@ -55,21 +59,4 @@ public class SQLGame implements GameDataAccess {
             """
     };
 
-    private void setupDatabase () {
-        try {
-            DatabaseManager.createDatabase();
-        } catch (DataAccessException e) {
-            throw new RuntimeException(e);
-        }
-
-        try (Connection conn = DatabaseManager.getConnection()) {
-            for (String statement : gameStatements) {
-                try (var preparedStatement = conn.prepareStatement(statement)) {
-                    preparedStatement.executeUpdate();
-                }
-            }
-        } catch (DataAccessException | SQLException e) {
-            throw new RuntimeException(e);
-        }
-    }
 }

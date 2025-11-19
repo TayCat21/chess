@@ -7,7 +7,11 @@ import java.sql.*;
 public class SQLUser implements UserDataAccess {
 
     public SQLUser() {
-        setupDatabase();
+        try {
+            DatabaseManager.setupDatabase(userStatements);
+        } catch (DataAccessException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
@@ -38,23 +42,5 @@ public class SQLUser implements UserDataAccess {
             )
             """
     };
-
-    private void setupDatabase () {
-        try {
-            DatabaseManager.createDatabase();
-        } catch (DataAccessException e) {
-            throw new RuntimeException(e);
-        }
-
-        try (Connection conn = DatabaseManager.getConnection()) {
-            for (String statement : userStatements) {
-                try (var preparedStatement = conn.prepareStatement(statement)) {
-                    preparedStatement.executeUpdate();
-                }
-            }
-        } catch (DataAccessException | SQLException e) {
-            throw new RuntimeException(e);
-        }
-    }
 
 }
