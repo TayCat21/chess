@@ -17,17 +17,18 @@ public class SQLAuth implements AuthDataAccess {
     @Override
     public Authdata getAuth(String authToken) throws DataAccessException {
         try (Connection conn = DatabaseManager.getConnection()) {
-            var statement = "SELECT username, authToken FROM auth WHERE authToken=?";
+            var statement = "SELECT authToken, username FROM auth WHERE authToken=?";
             try (PreparedStatement ps = conn.prepareStatement(statement)) {
                 ps.setString(1, authToken);
                 try (ResultSet rs = ps.executeQuery()) {
                     rs.next();
+                    rs.getString("authToken");
                     var username = rs.getString("username");
                     return new Authdata(authToken, username);
                 }
             }
         } catch (SQLException e) {
-            throw new DataAccessException("Couldn't find authToken: " + authToken);
+            return null;
         }
     }
 
@@ -35,17 +36,19 @@ public class SQLAuth implements AuthDataAccess {
     public void makeAuth(String authToken, String username) throws DataAccessException {
         Authdata token = new Authdata(authToken, username);
         var statement = "INSERT INTO auth (authToken, username) VALUES (?, ?)";
-        DatabaseManager.updateDatabase(statement, token.username(), token.authToken());
+        DatabaseManager.updateDatabase(statement, token.authToken(), token.username());
     }
 
     @Override
-    public void deleteAuth(String authToken) {
-
+    public void deleteAuth(String authToken) throws DataAccessException {
+        var statement = "DELETE FROM auth WHERE authToken=?";
+        DatabaseManager.updateDatabase(statement, authToken);
     }
 
     @Override
-    public void clear() {
-
+    public void clear() throws DataAccessException {
+        var statement = "TRUNCATE auth";
+        DatabaseManager.updateDatabase(statement);
     }
 
     private final String[] authStatements = {

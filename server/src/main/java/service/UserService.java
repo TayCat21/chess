@@ -50,7 +50,10 @@ public class UserService {
 	}
 
 	public void clear() {
-		userDataAccess.clear();
-		authDataAccess.clear();
+		try {
+			userDataAccess.clear();
+			authDataAccess.clear();
+		} catch (DataAccessException e) {
+		}
 	}
 }

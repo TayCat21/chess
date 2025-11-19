@@ -30,7 +30,7 @@ public class SQLUser implements UserDataAccess {
                 }
             }
         } catch (SQLException e) {
-            throw new DataAccessException("Couldn't find user: " + username);
+            return null;
         }
     }
 
@@ -44,12 +44,13 @@ public class SQLUser implements UserDataAccess {
 
     @Override
     public boolean matchingPass(String inputPass, String hashedPass) {
-        return hashPassword(inputPass).equals(hashedPass);
+        return BCrypt.checkpw(inputPass, hashedPass);
     }
 
     @Override
-    public void clear() {
-
+    public void clear() throws DataAccessException {
+        var statement = "TRUNCATE user";
+        DatabaseManager.updateDatabase(statement);
     }
 
     private final String[] userStatements = {
@@ -64,8 +65,7 @@ public class SQLUser implements UserDataAccess {
     };
 
     private String hashPassword(String clearPassword) {
-        String hashedPassword = BCrypt.hashpw(clearPassword, BCrypt.gensalt());
-        return hashedPassword;
+        return BCrypt.hashpw(clearPassword, BCrypt.gensalt());
     }
 
 }

@@ -9,5 +9,5 @@ public interface UserDataAccess {
 
     boolean matchingPass(String inputPass, String hashedPass);
 
-    void clear();
+    void clear() throws DataAccessException;
 }
