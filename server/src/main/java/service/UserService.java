@@ -30,7 +30,7 @@ public class UserService {
 
 	public LoginResult login(LoginRequest loginRequest) throws DataAccessException {
 		Userdata existingUser = userDataAccess.getUser(loginRequest.username());
-		if (existingUser == null || !(loginRequest.password().equals(existingUser.password()))) {
+		if (existingUser == null || !(userDataAccess.matchingPass(loginRequest.password(), existingUser.password()))) {
 			throw new DataAccessException("unauthorized");
 		}
 

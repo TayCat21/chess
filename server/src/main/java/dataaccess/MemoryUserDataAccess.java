@@ -28,6 +28,11 @@ public class MemoryUserDataAccess implements UserDataAccess {
     }
 
     @Override
+    public boolean matchingPass(String inputPass, String storedPass) {
+        return inputPass.equals(storedPass);
+    }
+
+    @Override
     public void clear() {
         userBank.clear();
     }

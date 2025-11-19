@@ -7,5 +7,7 @@ public interface UserDataAccess {
 
     void addUser(String username, String password, String email) throws DataAccessException;
 
+    boolean matchingPass(String inputPass, String hashedPass);
+
     void clear();
 }
