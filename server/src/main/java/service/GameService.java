@@ -35,7 +35,11 @@ public class GameService {
     }
 
     public void clear() {
-        gameDataAccess.clear();
+        try {
+            gameDataAccess.clear();
+        } catch (DataAccessException e) {
+            throw new RuntimeException(e);
+        }
     }
 
 

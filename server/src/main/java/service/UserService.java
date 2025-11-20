@@ -54,6 +54,7 @@ public class UserService {
 			userDataAccess.clear();
 			authDataAccess.clear();
 		} catch (DataAccessException e) {
+			throw new RuntimeException(e);
 		}
 	}
 }
