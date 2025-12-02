@@ -4,7 +4,6 @@ import chess.ChessGame;
 import com.google.gson.Gson;
 import model.Gamedata;
 import service.ListGamesItem;
-
 import java.sql.*;
 import java.util.List;
 
@@ -21,8 +20,22 @@ public class SQLGame implements GameDataAccess {
 
     @Override
     public Gamedata getGame(int gameID) {
-
-        return null;
+        try (Connection conn = DatabaseManager.getConnection()) {
+            var statement = "SELECT username, password, email FROM user WHERE username=?";
+            try (PreparedStatement ps = conn.prepareStatement(statement)) {
+                ps.setInt(1, gameID);
+                try (ResultSet rs = ps.executeQuery()) {
+                    rs.next();
+                    var whiteUsername = rs.getString("whiteUsername");
+                    var blackUsername = rs.getString("blackUsername");
+                    var gameName = rs.getString("gameName");
+                    var chessGame = new Gson().fromJson(rs.getString("chessGame"), ChessGame.class);
+                    return new Gamedata(gameID, whiteUsername, blackUsername, gameName, chessGame);
+                }
+            }
+        } catch (SQLException | DataAccessException e) {
+            return null;
+        }
     }
 
     @Override
@@ -63,13 +76,72 @@ public class SQLGame implements GameDataAccess {
         var blackUsername = rs.getString("blackUsername");
         var gameName = rs.getString("gameName");
 
-        ListGamesItem game = new Gson().fromJson(game.class);
-        return game;
+        return new ListGamesItem(gameID, whiteUsername, blackUsername, gameName);
     }
 
     @Override
     public void updateGame(ChessGame.TeamColor color, String username, int gameID) throws DataAccessException {
+        if (gameSpotOpen(gameID, color)) {
+            String statement;
+            switch (color) {
+                case ChessGame.TeamColor.WHITE -> {
+                    statement = "UPDATE game SET whiteUsername = ? WHERE gameID = ?;";
+                }
+                case ChessGame.TeamColor.BLACK -> {
+                    statement = "UPDATE game SET blackUsername = ? WHERE gameID = ?;";
+                }
+                default -> {
+                    throw new DataAccessException("color wasn't selected");
+                }
+            }
+            DatabaseManager.updateDatabase(statement, username, gameID);
+        }
+        else {
+            throw new DataAccessException("bad request");
+        }
+    }
 
+    public boolean gameSpotOpen(int gameID, ChessGame.TeamColor color) {
+        if (gameExists(gameID)) {
+            try (Connection conn = DatabaseManager.getConnection()) {
+                String statement;
+                switch (color) {
+                    case ChessGame.TeamColor.WHITE -> {
+                        statement = "SELECT whiteUsername FROM game WHERE gameID=?";
+                    }
+                    case ChessGame.TeamColor.BLACK -> {
+                        statement = "SELECT blackUsername FROM game WHERE gameID=?";
+                    }
+                    default -> {
+                        throw new DataAccessException("color wasn't selected");
+                    }
+                }
+                try (PreparedStatement ps = conn.prepareStatement(statement)) {
+                    ps.setInt(1, gameID);
+                    try (ResultSet rs = ps.executeQuery()) {
+                        return rs.toString().isEmpty();
+                    }
+                }
+            } catch (SQLException | DataAccessException e) {
+                return false;
+            }
+        } else {
+            return false;
+        }
+    }
+
+    public boolean gameExists(int gameID) {
+        try (Connection conn = DatabaseManager.getConnection()) {
+            var statement = "SELECT gameID FROM game WHERE gameID=?";
+            try (PreparedStatement ps = conn.prepareStatement(statement)) {
+                ps.setInt(1, gameID);
+                try (ResultSet rs = ps.executeQuery()) {
+                    return rs.next();
+                }
+            }
+        } catch (SQLException | DataAccessException e) {
+            return false;
+        }
     }
 
     @Override

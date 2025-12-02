@@ -54,8 +54,10 @@ public class DatabaseManager {
     static void updateDatabase(String statement, Object... params) throws DataAccessException {
         try (Connection conn = DatabaseManager.getConnection()) {
             try (PreparedStatement ps = conn.prepareStatement(statement, RETURN_GENERATED_KEYS)) {
+                System.out.println("________");
                 for (int i = 0; i < params.length; i++) {
                     Object param = params[i];
+                    System.out.println("Breakpoint i: " + param.toString());
                     switch (param) {
                         case String p -> ps.setString(i + 1, p);
                         case Integer p -> ps.setInt(i + 1, p);
