@@ -111,8 +111,10 @@ public class SQLGame implements GameDataAccess {
                     (color == ChessGame.TeamColor.BLACK && !blackNull)) {
                 throw new DataAccessException("already taken");
             }
-            else return ((color == ChessGame.TeamColor.WHITE && whiteNull) ||
-                    (color == ChessGame.TeamColor.BLACK && blackNull));
+            else {
+                return ((color == ChessGame.TeamColor.WHITE && whiteNull) ||
+                        (color == ChessGame.TeamColor.BLACK && blackNull));
+            }
         } else {
             return false;
         }

@@ -9,9 +9,6 @@ import service.GameService;
 public class Server {
 
     private final Javalin javalin;
-//    MemoryAuthDataAccess authDAO = new MemoryAuthDataAccess();
-//    MemoryUserDataAccess userDAO = new MemoryUserDataAccess();
-//    MemoryGameDataAccess gameDAO = new MemoryGameDataAccess();
 
     SQLAuth authDAO = new SQLAuth();
     SQLUser userDAO = new SQLUser();
