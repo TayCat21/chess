@@ -21,7 +21,7 @@ public class SQLGame implements GameDataAccess {
     @Override
     public Gamedata getGame(int gameID) {
         try (Connection conn = DatabaseManager.getConnection()) {
-            var statement = "SELECT username, password, email FROM user WHERE username=?";
+            var statement = "SELECT whiteUsername, blackUsername, gameName, chessGame FROM game WHERE gameID=?";
             try (PreparedStatement ps = conn.prepareStatement(statement)) {
                 ps.setInt(1, gameID);
                 try (ResultSet rs = ps.executeQuery()) {
@@ -29,7 +29,7 @@ public class SQLGame implements GameDataAccess {
                     var whiteUsername = rs.getString("whiteUsername");
                     var blackUsername = rs.getString("blackUsername");
                     var gameName = rs.getString("gameName");
-                    var chessGame = new Gson().fromJson(rs.getString("chessGame"), ChessGame.class);
+                    var chessGame = packageGame(rs.getString("chessGame"));
                     return new Gamedata(gameID, whiteUsername, blackUsername, gameName, chessGame);
                 }
             }
@@ -48,7 +48,7 @@ public class SQLGame implements GameDataAccess {
         var statement = "INSERT INTO game (gameID, whiteUsername, blackUsername, gameName," +
                 " chessGame) VALUES (?, ?, ?, ?, ?)";
         DatabaseManager.updateDatabase(statement, newGame.gameID(), newGame.whiteUsername(), newGame.blackUsername(),
-                newGame.gameName(), newGame.game());
+                newGame.gameName(), unpackageGame(newGame.game()));
         return gameID;
     }
 
@@ -101,30 +101,18 @@ public class SQLGame implements GameDataAccess {
         }
     }
 
-    public boolean gameSpotOpen(int gameID, ChessGame.TeamColor color) {
+    public boolean gameSpotOpen(int gameID, ChessGame.TeamColor color) throws DataAccessException {
         if (gameExists(gameID)) {
-            try (Connection conn = DatabaseManager.getConnection()) {
-                String statement;
-                switch (color) {
-                    case ChessGame.TeamColor.WHITE -> {
-                        statement = "SELECT whiteUsername FROM game WHERE gameID=?";
-                    }
-                    case ChessGame.TeamColor.BLACK -> {
-                        statement = "SELECT blackUsername FROM game WHERE gameID=?";
-                    }
-                    default -> {
-                        throw new DataAccessException("color wasn't selected");
-                    }
-                }
-                try (PreparedStatement ps = conn.prepareStatement(statement)) {
-                    ps.setInt(1, gameID);
-                    try (ResultSet rs = ps.executeQuery()) {
-                        return rs.toString().isEmpty();
-                    }
-                }
-            } catch (SQLException | DataAccessException e) {
-                return false;
+            Gamedata currentState = getGame(gameID);
+            boolean whiteNull = (currentState.whiteUsername() == null);
+            boolean blackNull = (currentState.blackUsername() == null);
+
+            if ((color == ChessGame.TeamColor.WHITE && !whiteNull) ||
+                    (color == ChessGame.TeamColor.BLACK && !blackNull)) {
+                throw new DataAccessException("already taken");
             }
+            else return ((color == ChessGame.TeamColor.WHITE && whiteNull) ||
+                    (color == ChessGame.TeamColor.BLACK && blackNull));
         } else {
             return false;
         }
@@ -148,6 +136,14 @@ public class SQLGame implements GameDataAccess {
     public void clear() throws DataAccessException {
         var statement = "TRUNCATE game";
         DatabaseManager.updateDatabase(statement);
+    }
+
+    private String unpackageGame (ChessGame chessGame) {
+        return new Gson().toJson(chessGame);
+    }
+
+    private ChessGame packageGame (String chessGame) {
+        return new Gson().fromJson(chessGame, ChessGame.class);
     }
 
     private final String[] gameStatements = {
