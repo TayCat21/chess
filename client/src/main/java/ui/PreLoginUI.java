@@ -1,6 +1,6 @@
 package ui;
 
-import client.ServerFacade;
+import client.*;
 
 public class PreLoginUI {
 
@@ -9,7 +9,7 @@ public class PreLoginUI {
     private final WebSocketFacade ws;
     private State state = State.SIGNEDOUT;
 
-    public PetClient(String serverUrl) throws ResponseException {
+    public PreLoginUI(String serverUrl) throws ClientException {
         server = new ServerFacade(serverUrl);
         ws = new WebSocketFacade(serverUrl, this);
     }

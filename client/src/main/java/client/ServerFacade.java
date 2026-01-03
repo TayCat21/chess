@@ -1,7 +1,6 @@
 package client;
 
 import com.google.gson.Gson;
-import exception.ResponseException;
 import model.*;
 
 import java.net.*;
@@ -55,23 +54,23 @@ public class ServerFacade {
         }
     }
 
-    private HttpResponse<String> sendRequest(HttpRequest request) throws ResponseException {
+    private HttpResponse<String> sendRequest(HttpRequest request) throws ClientException {
         try {
             return client.send(request, BodyHandlers.ofString());
         } catch (Exception ex) {
-            throw new ResponseException(ResponseException.Code.ServerError, ex.getMessage());
+            throw new ClientException(ClientException.Code.ServerError, ex.getMessage());
         }
     }
 
-    private <T> T handleResponse(HttpResponse<String> response, Class<T> responseClass) throws ResponseException {
+    private <T> T handleResponse(HttpResponse<String> response, Class<T> responseClass) throws ClientException {
         var status = response.statusCode();
         if (!isSuccessful(status)) {
             var body = response.body();
             if (body != null) {
-                throw ResponseException.fromJson(body);
+                throw ClientException.fromJson(body);
             }
 
-            throw new ResponseException(ResponseException.fromHttpStatusCode(status), "other failure: " + status);
+            throw new ClientException(ClientException.fromHttpStatusCode(status), "other failure: " + status);
         }
 
         if (responseClass != null) {
