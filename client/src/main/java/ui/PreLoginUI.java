@@ -2,38 +2,67 @@ package ui;
 
 import client.*;
 
+import java.util.Scanner;
+import  static ui.EscapeSequences.*;
+
 public class PreLoginUI {
 
-    private String visitorName = null;
-    private final ServerFacade server;
-    private final WebSocketFacade ws;
-    private State state = State.SIGNEDOUT;
+    ServerFacade server;
+    PostLoginUI postLoginUI;
 
-    public PreLoginUI(String serverUrl) throws ClientException {
-        server = new ServerFacade(serverUrl);
-        ws = new WebSocketFacade(serverUrl, this);
+    public PreLoginUI(ServerFacade server) {
+        this.server = server;
+        postLoginUI = new PostLoginUI(server);
     }
 
     public void run() {
-        System.out.println(LOGO + " Welcome to the pet store. Sign in to start.");
-        System.out.print(help());
+        System.out.print(RESET_TEXT_COLOR + RESET_BG_COLOR);
+        System.out.println("♞ Welcome to your Chess Hub!♟ Type 'help' for options.");
 
+        boolean signedIn = false;
         Scanner scanner = new Scanner(System.in);
-        var result = "";
-        while (!result.equals("quit")) {
-            printPrompt();
-            String line = scanner.nextLine();
 
-            try {
-                result = eval(line);
-                System.out.print(BLUE + result);
-            } catch (Throwable e) {
-                var msg = e.toString();
-                System.out.print(msg);
+        while (!signedIn) {
+            System.out.print("\n[LOGGED_OUT] >>> " + SET_TEXT_COLOR_GREEN);
+            String[] userInput = scanner.nextLine().split(" ");
+
+            switch (userInput[0].toLowerCase()) {
+                case "help":
+                    printHelp("menu");
+                    break;
+                case "register":
+                    if (userInput.length != 4) {
+                        System.out.println(SET_BG_COLOR_DARK_GREY + "");
+                    }
+                case "quit":
+                    return;
             }
         }
-        System.out.println();
+
     }
 
+    private void printHelp(String output) {
+        String registerPrint = (SET_TEXT_COLOR_BLUE + "register <USERNAME> <PASSWORD> <EMAIL>" +
+                SET_TEXT_COLOR_LIGHT_GREY + " - to create a new account");
+        String loginPrint = (SET_TEXT_COLOR_BLUE + "login <USERNAME> <PASSWORD>" +
+                SET_TEXT_COLOR_LIGHT_GREY + " - to access a current account");
+
+        switch (output) {
+            case "register":
+                System.out.println(registerPrint);
+                break;
+            case "login":
+                System.out.println(loginPrint);
+                break;
+            case "menu":
+                System.out.println(registerPrint);
+                System.out.println(loginPrint);
+                System.out.println(SET_TEXT_COLOR_BLUE + "quit" +
+                        SET_TEXT_COLOR_LIGHT_GREY + " - to close the program");
+                System.out.println(SET_TEXT_COLOR_BLUE + "help" +
+                        SET_TEXT_COLOR_LIGHT_GREY + " - to display possible commands");
+                break;
+        }
+    }
 
 }
