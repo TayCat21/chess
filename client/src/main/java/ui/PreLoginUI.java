@@ -17,13 +17,14 @@ public class PreLoginUI {
 
     public void run() {
         System.out.print(RESET_TEXT_COLOR + RESET_BG_COLOR);
-        System.out.println("♞ Welcome to your Chess Hub!♟ Type 'help' for options.");
+        System.out.println("♞ " + SET_TEXT_COLOR_YELLOW + "Welcome to your Chess Hub!" + RESET_TEXT_COLOR +
+                "♟ Type" + SET_TEXT_COLOR_BLUE + " 'help' " + RESET_TEXT_COLOR + "for options.");
 
         boolean signedIn = false;
         Scanner scanner = new Scanner(System.in);
 
         while (!signedIn) {
-            System.out.print("\n[LOGGED_OUT] >>> " + SET_TEXT_COLOR_GREEN);
+            System.out.print(SET_TEXT_COLOR_WHITE + "\n[LOGGED_OUT] >>> " + SET_TEXT_COLOR_LIGHT_GREY);
             String[] userInput = scanner.nextLine().split(" ");
 
             switch (userInput[0].toLowerCase()) {
@@ -32,20 +33,47 @@ public class PreLoginUI {
                     break;
                 case "register":
                     if (userInput.length != 4) {
-                        System.out.println(SET_BG_COLOR_DARK_GREY + "");
+                        System.out.println("Input a Username, Password, and Email with the initial statement:");
+                        printHelp("register");
+                        break;
                     }
+
+                    try {
+                        server.register(userInput[1], userInput[2], userInput[3]);
+                        System.out.println("registration successful");
+                        signedIn = true;
+                        break;
+                    } catch(ClientException e) {
+                        System.out.println("registration failed");
+                        break;
+                    }
+                case "login":
+                    if (userInput.length != 3) {
+                        System.out.println("Input your Username and Password in " +
+                                "the initial statement:");
+                        printHelp("login");
+                    }
+                    else {
+                        signedIn = true;
+                    }
+                    break;
                 case "quit":
+                    System.out.print(SET_TEXT_COLOR_YELLOW);
                     return;
+                default:
+                    System.out.println("Unknown Command -- Please try again");
+                    printHelp("menu");
+                    break;
             }
         }
+
+        postLoginUI.run();
 
     }
 
     private void printHelp(String output) {
-        String registerPrint = (SET_TEXT_COLOR_BLUE + "register <USERNAME> <PASSWORD> <EMAIL>" +
-                SET_TEXT_COLOR_LIGHT_GREY + " - to create a new account");
-        String loginPrint = (SET_TEXT_COLOR_BLUE + "login <USERNAME> <PASSWORD>" +
-                SET_TEXT_COLOR_LIGHT_GREY + " - to access a current account");
+        String registerPrint = (SET_TEXT_COLOR_BLUE + "register <USERNAME> <PASSWORD> <EMAIL>");
+        String loginPrint = (SET_TEXT_COLOR_BLUE + "login <USERNAME> <PASSWORD>");
 
         switch (output) {
             case "register":
@@ -55,8 +83,8 @@ public class PreLoginUI {
                 System.out.println(loginPrint);
                 break;
             case "menu":
-                System.out.println(registerPrint);
-                System.out.println(loginPrint);
+                System.out.println(registerPrint + SET_TEXT_COLOR_LIGHT_GREY + " - to create a new account");
+                System.out.println(loginPrint + SET_TEXT_COLOR_LIGHT_GREY + " - to access a current account");
                 System.out.println(SET_TEXT_COLOR_BLUE + "quit" +
                         SET_TEXT_COLOR_LIGHT_GREY + " - to close the program");
                 System.out.println(SET_TEXT_COLOR_BLUE + "help" +

@@ -1,7 +1,7 @@
 package client;
 
+import chess.ChessGame;
 import com.google.gson.Gson;
-import model.*;
 
 import java.net.*;
 import java.net.http.*;
@@ -18,25 +18,28 @@ public class ServerFacade {
         serverUrl = url;
     }
 
-    public RegisterResult register(registerRequest request) {
+    public ChessGame register(String username, String password, String email) throws ClientException {
+        var request = buildRequest("POST", "/user", username, password, email);
+        var response = sendRequest(request);
+        return handleResponse(response, ChessGame.class);
     }
+//
+//    public RegisterResult login(registerRequest request) {
+//    }
+//
+//    public RegisterResult logout(registerRequest request) {
+//    }
+//
+//    public RegisterResult listGames(registerRequest request) {
+//    }
+//
+//    public RegisterResult createGame(registerRequest request) {
+//    }
+//
+//    public RegisterResult joinGame(registerRequest request) {
+//    }
 
-    public RegisterResult login(registerRequest request) {
-    }
-
-    public RegisterResult logout(registerRequest request) {
-    }
-
-    public RegisterResult listGames(registerRequest request) {
-    }
-
-    public RegisterResult createGame(registerRequest request) {
-    }
-
-    public RegisterResult joinGame(registerRequest request) {
-    }
-
-    private HttpRequest buildRequest(String method, String path, Object body) {
+    private HttpRequest buildRequest(String method, String path, Object... body) {
         var request = HttpRequest.newBuilder()
                 .uri(URI.create(serverUrl + path))
                 .method(method, makeRequestBody(body));
