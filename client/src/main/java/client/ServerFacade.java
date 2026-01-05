@@ -8,6 +8,7 @@ import java.net.http.*;
 import java.net.http.HttpRequest.BodyPublisher;
 import java.net.http.HttpRequest.BodyPublishers;
 import java.net.http.HttpResponse.BodyHandlers;
+import java.util.Map;
 
 public class ServerFacade {
 
@@ -19,27 +20,29 @@ public class ServerFacade {
     }
 
     public ChessGame register(String username, String password, String email) throws ClientException {
-        var request = buildRequest("POST", "/user", username, password, email);
+        var body = Map.of("username", username, "password", password, "email", email);
+        var request = buildRequest("POST", "/user", body);
         var response = sendRequest(request);
         return handleResponse(response, ChessGame.class);
     }
-//
-//    public RegisterResult login(registerRequest request) {
-//    }
-//
-//    public RegisterResult logout(registerRequest request) {
-//    }
-//
+
+    public void login(String username, String password) {
+    }
+
+    public void logout() {
+    }
+
 //    public RegisterResult listGames(registerRequest request) {
 //    }
 //
-//    public RegisterResult createGame(registerRequest request) {
-//    }
+    public void createGame(String name) {
+    }
 //
 //    public RegisterResult joinGame(registerRequest request) {
 //    }
 
-    private HttpRequest buildRequest(String method, String path, Object... body) {
+    private HttpRequest buildRequest(String method, String path, Object body) {
+        System.out.println("---Building Request---");
         var request = HttpRequest.newBuilder()
                 .uri(URI.create(serverUrl + path))
                 .method(method, makeRequestBody(body));
@@ -50,6 +53,7 @@ public class ServerFacade {
     }
 
     private BodyPublisher makeRequestBody(Object request) {
+        System.out.println("---Building Request Body---");
         if (request != null) {
             return BodyPublishers.ofString(new Gson().toJson(request));
         } else {
@@ -58,6 +62,7 @@ public class ServerFacade {
     }
 
     private HttpResponse<String> sendRequest(HttpRequest request) throws ClientException {
+        System.out.println("---Sending Request---");
         try {
             return client.send(request, BodyHandlers.ofString());
         } catch (Exception ex) {
@@ -66,6 +71,7 @@ public class ServerFacade {
     }
 
     private <T> T handleResponse(HttpResponse<String> response, Class<T> responseClass) throws ClientException {
+        System.out.println("---Handling Request---");
         var status = response.statusCode();
         if (!isSuccessful(status)) {
             var body = response.body();
