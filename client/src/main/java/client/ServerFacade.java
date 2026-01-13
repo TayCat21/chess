@@ -5,18 +5,19 @@ import com.google.gson.Gson;
 
 import java.net.*;
 import java.net.http.*;
-import java.net.http.HttpRequest.BodyPublisher;
-import java.net.http.HttpRequest.BodyPublishers;
-import java.net.http.HttpResponse.BodyHandlers;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.util.Map;
+
 
 public class ServerFacade {
 
-    private final HttpClient client = HttpClient.newHttpClient();
-    private final String serverUrl;
+    private static final HttpClient httpClient = HttpClient.newHttpClient();
+    private String serverUrl;
 
-    public ServerFacade(String url) {
-        serverUrl = url;
+    public ServerFacade(String url) throws Exception {
+        this.serverUrl = url;
     }
 
     public ChessGame register(String username, String password, String email) throws ClientException {
@@ -52,19 +53,19 @@ public class ServerFacade {
         return request.build();
     }
 
-    private BodyPublisher makeRequestBody(Object request) {
+    private HttpRequest.BodyPublisher makeRequestBody(Object request) {
         System.out.println("---Building Request Body---");
         if (request != null) {
-            return BodyPublishers.ofString(new Gson().toJson(request));
+            return HttpRequest.BodyPublishers.ofString(new Gson().toJson(request));
         } else {
-            return BodyPublishers.noBody();
+            return HttpRequest.BodyPublishers.noBody();
         }
     }
 
     private HttpResponse<String> sendRequest(HttpRequest request) throws ClientException {
         System.out.println("---Sending Request---");
         try {
-            return client.send(request, BodyHandlers.ofString());
+            return httpClient.send(request, HttpResponse.BodyHandlers.ofString());
         } catch (Exception ex) {
             throw new ClientException(ClientException.Code.ServerError, ex.getMessage());
         }

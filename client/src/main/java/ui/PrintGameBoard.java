@@ -32,7 +32,7 @@ public class PrintGameBoard {
             for (int i = 0; i < 4; i++) {
                 sideNum--;
                 System.out.print(SET_BG_COLOR_LIGHT_GREY + SET_TEXT_COLOR_BLACK + " " + sideNum + " ");
-                printBlankRows(sideNum);
+                printBlankRows(sideNum, true);
                 System.out.print(SET_BG_COLOR_LIGHT_GREY + SET_TEXT_COLOR_BLACK + " " + sideNum + " " + ln);
             }
 
@@ -67,7 +67,7 @@ public class PrintGameBoard {
             for (int i = 0; i < 4; i++) {
                 sideNum++;
                 System.out.print(SET_BG_COLOR_LIGHT_GREY + SET_TEXT_COLOR_BLACK + " " + sideNum + " ");
-                printBlankRows(sideNum);
+                printBlankRows(sideNum, false);
                 System.out.print(SET_BG_COLOR_LIGHT_GREY + SET_TEXT_COLOR_BLACK + " " + sideNum + " " + ln);
             }
 
@@ -92,6 +92,8 @@ public class PrintGameBoard {
 
     static void printPawns(Boolean blue, Boolean front) {
         String pSpace = " P ";
+        String colorOne;
+        String colorTwo;
 
         if (blue) {
             System.out.print(SET_TEXT_COLOR_BLUE);
@@ -99,17 +101,17 @@ public class PrintGameBoard {
             System.out.print(SET_TEXT_COLOR_RED);
         }
 
-        if (!front) {
-            for (int j = 0; j < 4; j++) {
-                System.out.print(SET_BG_COLOR_BLACK + pSpace
-                        + SET_BG_COLOR_WHITE + pSpace);
-            }
+        if (front) {
+            colorOne = SET_BG_COLOR_WHITE;
+            colorTwo = SET_BG_COLOR_BLACK;
         }
         else {
-            for (int j = 0; j < 4; j++) {
-                System.out.print(SET_BG_COLOR_WHITE + pSpace
-                        + SET_BG_COLOR_BLACK + pSpace);
-            }
+            colorOne = SET_BG_COLOR_BLACK;
+            colorTwo = SET_BG_COLOR_WHITE;
+        }
+        for (int j = 0; j < 4; j++) {
+            System.out.print(colorOne + pSpace
+                    + colorTwo + pSpace);
         }
     }
 
@@ -142,18 +144,24 @@ public class PrintGameBoard {
 
     static void printBlankRows(int sideNum, boolean white) {
         String space = "   ";
+        String colorOne;
+        String colorTwo;
 
         if (white) {
-            for (int j = 0; j < 4; j++) {
-                if (sideNum % 2 == 0) {
-                    System.out.print(SET_BG_COLOR_WHITE + space + SET_BG_COLOR_BLACK + space);
-                } else {
-                    System.out.print(SET_BG_COLOR_BLACK + space + SET_BG_COLOR_WHITE + space);
-                }
-            }
+            colorOne = SET_BG_COLOR_WHITE;
+            colorTwo = SET_BG_COLOR_BLACK;
         }
         else {
+            colorOne = SET_BG_COLOR_BLACK;
+            colorTwo = SET_BG_COLOR_WHITE;
+        }
 
+        for (int j = 0; j < 4; j++) {
+            if (sideNum % 2 == 0) {
+                System.out.print(colorOne + space + colorTwo + space);
+            } else {
+                System.out.print(colorTwo + space + colorOne + space);
+            }
         }
     }
 
