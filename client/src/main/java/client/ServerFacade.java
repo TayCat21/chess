@@ -20,6 +20,7 @@ public class ServerFacade {
     }
 
     public ChessGame register(String username, String password, String email) throws ClientException {
+        System.out.println(username + " " + password + " " + email);
         var body = Map.of("username", username, "password", password, "email", email);
         var request = buildRequest("POST", "/user", body);
         var response = sendRequest(request);
@@ -43,8 +44,7 @@ public class ServerFacade {
 
     private HttpRequest buildRequest(String method, String path, Object body) {
         System.out.println("---Building Request---");
-        var request = HttpRequest.newBuilder()
-                .uri(URI.create(serverUrl + path))
+        var request = HttpRequest.newBuilder().uri(URI.create(serverUrl + path))
                 .method(method, makeRequestBody(body));
         if (body != null) {
             request.setHeader("Content-Type", "application/json");

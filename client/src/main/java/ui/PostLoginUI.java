@@ -1,5 +1,6 @@
 package ui;
 
+import chess.ChessGame;
 import client.ClientException;
 import client.ServerFacade;
 import model.Gamedata;
@@ -22,9 +23,8 @@ public class PostLoginUI {
     public void run() {
         System.out.print(RESET_TEXT_COLOR + RESET_BG_COLOR);
         boolean signedIn = true;
-        boolean inGame = false;
 
-        while (signedIn && !inGame) {
+        while (signedIn) {
             Scanner scanner = new Scanner(System.in);
             System.out.print(SET_TEXT_COLOR_WHITE + "\n[LOGGED_IN] >>> " + SET_TEXT_COLOR_LIGHT_GREY);
             String[] userInput = scanner.nextLine().split(" ");
@@ -44,7 +44,32 @@ public class PostLoginUI {
                     System.out.printf("Created Game: %s%n", userInput[1]);
                     break;
                 case "join":
-                    //handle join
+                    if (userInput.length != 3) {
+                        System.out.println("Input both a Game ID and Color Selection with the initial statement:");
+                        printHelp("join");
+                        break;
+                    }
+
+                    //Check valid ID
+
+                    ChessGame.TeamColor color;
+                    if ((userInput[2].toUpperCase()).equals("WHITE")) {
+                        color = ChessGame.TeamColor.WHITE;
+                    }
+                    else if ((userInput[2].toUpperCase()).equals("BLACK")) {
+                        color = ChessGame.TeamColor.BLACK;
+                    }
+                    else {
+                        System.out.println("Color Selection not recognized. Select either"
+                                + SET_TEXT_COLOR_BLUE + " WHITE" + SET_TEXT_COLOR_LIGHT_GREY + " or"
+                                + SET_TEXT_COLOR_BLUE + " BLACK" + SET_TEXT_COLOR_LIGHT_GREY);
+                        break;
+                    }
+
+                    PrintGameBoard.printInitialBoard(color);
+
+                    GameplayUI gameplayUI = new GameplayUI(server);
+                    gameplayUI.run();
                     break;
                 case "observe":
                     //handle observe
