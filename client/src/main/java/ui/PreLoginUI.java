@@ -44,7 +44,7 @@ public class PreLoginUI {
                         signedIn = true;
                         break;
                     } catch(ClientException e) {
-                        System.out.println("registration failed: " + e.getMessage());
+                        System.out.println("registration failed: ");
                         break;
                     }
                 case "login":
