@@ -13,41 +13,76 @@ public class PrintGameBoard {
         System.out.println(RESET_BG_COLOR + RESET_TEXT_COLOR);
         String space = "   ";
         String ln = (RESET_BG_COLOR + "\n");
-        System.out.print(SET_BG_COLOR_DARK_GREY + SET_TEXT_COLOR_BLACK + space);
+        System.out.print(SET_BG_COLOR_LIGHT_GREY + SET_TEXT_COLOR_BLACK + space);
 
         if (color == ChessGame.TeamColor.WHITE) {
-            System.out.print(" a  b  c  d  e  f  g  h  " + space + ln);
+            System.out.print(" a  b  c  d  e  f  g  h " + space + ln);
 
             int sideNum = 8;
             String backRow = "RNBQKBRN";
-            System.out.print(SET_BG_COLOR_DARK_GREY + SET_TEXT_COLOR_BLACK + " " + sideNum + " ");
-            printBackRow(backRow, "blue");
-            System.out.print(SET_BG_COLOR_DARK_GREY + SET_TEXT_COLOR_BLACK + " " + sideNum + " " + ln);
+            System.out.print(SET_BG_COLOR_LIGHT_GREY + SET_TEXT_COLOR_BLACK + " " + sideNum + " ");
+            printBackRow(false, backRow, true);
+            System.out.print(SET_BG_COLOR_LIGHT_GREY + SET_TEXT_COLOR_BLACK + " " + sideNum + " " + ln);
 
             sideNum--;
-            System.out.print(SET_BG_COLOR_DARK_GREY + SET_TEXT_COLOR_BLACK + " " + sideNum + " ");
-            printPawns("blue");
-            System.out.print(SET_BG_COLOR_DARK_GREY + SET_TEXT_COLOR_BLACK + " " + sideNum + " " + ln);
+            System.out.print(SET_BG_COLOR_LIGHT_GREY + SET_TEXT_COLOR_BLACK + " " + sideNum + " ");
+            printPawns(true, false);
+            System.out.print(SET_BG_COLOR_LIGHT_GREY + SET_TEXT_COLOR_BLACK + " " + sideNum + " " + ln);
 
             for (int i = 0; i < 4; i++) {
                 sideNum--;
-                System.out.print(SET_BG_COLOR_DARK_GREY + SET_TEXT_COLOR_BLACK + " " + sideNum + " ");
+                System.out.print(SET_BG_COLOR_LIGHT_GREY + SET_TEXT_COLOR_BLACK + " " + sideNum + " ");
                 printBlankRows(sideNum);
-                System.out.print(SET_BG_COLOR_DARK_GREY + SET_TEXT_COLOR_BLACK + " " + sideNum + " " + ln);
+                System.out.print(SET_BG_COLOR_LIGHT_GREY + SET_TEXT_COLOR_BLACK + " " + sideNum + " " + ln);
             }
 
             sideNum--;
-            System.out.print(SET_BG_COLOR_DARK_GREY + SET_TEXT_COLOR_BLACK + " " + sideNum + " ");
-            printPawns("red");
-            System.out.print(SET_BG_COLOR_DARK_GREY + SET_TEXT_COLOR_BLACK + " " + sideNum + " " + ln);
+            System.out.print(SET_BG_COLOR_LIGHT_GREY + SET_TEXT_COLOR_BLACK + " " + sideNum + " ");
+            printPawns(false, true);
+            System.out.print(SET_BG_COLOR_LIGHT_GREY + SET_TEXT_COLOR_BLACK + " " + sideNum + " " + ln);
 
             sideNum--;
-            System.out.print(SET_BG_COLOR_DARK_GREY + SET_TEXT_COLOR_BLACK + " " + sideNum + " ");
-            printBackRow(backRow, "red");
-            System.out.print(SET_BG_COLOR_DARK_GREY + SET_TEXT_COLOR_BLACK + " " + sideNum + " " + ln);
+            System.out.print(SET_BG_COLOR_LIGHT_GREY + SET_TEXT_COLOR_BLACK + " " + sideNum + " ");
+            printBackRow(true, backRow, false);
+            System.out.print(SET_BG_COLOR_LIGHT_GREY + SET_TEXT_COLOR_BLACK + " " + sideNum + " " + ln);
 
+            System.out.print(SET_BG_COLOR_LIGHT_GREY + SET_TEXT_COLOR_BLACK + space
+                    + " a  b  c  d  e  f  g  h " + space);
         }
         else if (color == ChessGame.TeamColor.BLACK) {
+
+            System.out.print(" h  g  f  e  d  c  b  a " + space + ln);
+
+            int sideNum = 1;
+            String backRow = "RNBKQBRN";
+            System.out.print(SET_BG_COLOR_LIGHT_GREY + SET_TEXT_COLOR_BLACK + " " + sideNum + " ");
+            printBackRow(false, backRow, false);
+            System.out.print(SET_BG_COLOR_LIGHT_GREY + SET_TEXT_COLOR_BLACK + " " + sideNum + " " + ln);
+
+            sideNum++;
+            System.out.print(SET_BG_COLOR_LIGHT_GREY + SET_TEXT_COLOR_BLACK + " " + sideNum + " ");
+            printPawns(false, false);
+            System.out.print(SET_BG_COLOR_LIGHT_GREY + SET_TEXT_COLOR_BLACK + " " + sideNum + " " + ln);
+
+            for (int i = 0; i < 4; i++) {
+                sideNum++;
+                System.out.print(SET_BG_COLOR_LIGHT_GREY + SET_TEXT_COLOR_BLACK + " " + sideNum + " ");
+                printBlankRows(sideNum);
+                System.out.print(SET_BG_COLOR_LIGHT_GREY + SET_TEXT_COLOR_BLACK + " " + sideNum + " " + ln);
+            }
+
+            sideNum++;
+            System.out.print(SET_BG_COLOR_LIGHT_GREY + SET_TEXT_COLOR_BLACK + " " + sideNum + " ");
+            printPawns(true, true);
+            System.out.print(SET_BG_COLOR_LIGHT_GREY + SET_TEXT_COLOR_BLACK + " " + sideNum + " " + ln);
+
+            sideNum++;
+            System.out.print(SET_BG_COLOR_LIGHT_GREY + SET_TEXT_COLOR_BLACK + " " + sideNum + " ");
+            printBackRow(true, backRow, true);
+            System.out.print(SET_BG_COLOR_LIGHT_GREY + SET_TEXT_COLOR_BLACK + " " + sideNum + " " + ln);
+
+            System.out.print(SET_BG_COLOR_LIGHT_GREY + SET_TEXT_COLOR_BLACK + space
+                    + " h  g  f  e  d  c  b  a " + space);
 
         }
         else {
@@ -55,45 +90,70 @@ public class PrintGameBoard {
         }
     }
 
-    static void printPawns(String Color) {
+    static void printPawns(Boolean blue, Boolean front) {
         String pSpace = " P ";
 
-        if (Color.equals("blue")) {
+        if (blue) {
             System.out.print(SET_TEXT_COLOR_BLUE);
         } else {
             System.out.print(SET_TEXT_COLOR_RED);
         }
 
-        for (int j = 0; j < 4; j++) {
-            System.out.print(SET_TEXT_COLOR_BLUE + SET_BG_COLOR_BLACK + pSpace
-                    + SET_BG_COLOR_LIGHT_GREY + pSpace);
+        if (!front) {
+            for (int j = 0; j < 4; j++) {
+                System.out.print(SET_BG_COLOR_BLACK + pSpace
+                        + SET_BG_COLOR_WHITE + pSpace);
+            }
+        }
+        else {
+            for (int j = 0; j < 4; j++) {
+                System.out.print(SET_BG_COLOR_WHITE + pSpace
+                        + SET_BG_COLOR_BLACK + pSpace);
+            }
         }
     }
 
-    static void printBackRow(String backRow, String Color) {
+    static void printBackRow(Boolean front, String backRow, Boolean blue) {
         int piecePos = 0;
-        if (Color.equals("blue")) {
+        String colorOne;
+        String colorTwo;
+
+        if (blue) {
             System.out.print(SET_TEXT_COLOR_BLUE);
         } else {
             System.out.print(SET_TEXT_COLOR_RED);
         }
 
+        if (!front) {
+            colorOne = SET_BG_COLOR_WHITE;
+            colorTwo = SET_BG_COLOR_BLACK;
+        }
+        else {
+            colorOne = SET_BG_COLOR_BLACK;
+            colorTwo = SET_BG_COLOR_WHITE;
+        }
         for (int i = 0; i < 4; i++) {
-            System.out.print(SET_BG_COLOR_LIGHT_GREY + " " + backRow.charAt(piecePos)
-                    + " " + SET_BG_COLOR_BLACK + " " + backRow.charAt(piecePos+1) + " ");
+            System.out.print(colorOne + " " + backRow.charAt(piecePos)
+                    + " " + colorTwo + " " + backRow.charAt(piecePos + 1) + " ");
             piecePos = piecePos + 2;
         }
+
     }
 
-    static void printBlankRows(int sideNum) {
+    static void printBlankRows(int sideNum, boolean white) {
         String space = "   ";
 
-        for (int j = 0; j < 4; j++) {
-            if (sideNum % 2 == 0) {
-                System.out.print(SET_BG_COLOR_LIGHT_GREY + space + SET_BG_COLOR_BLACK + space);
-            } else {
-                System.out.print(SET_BG_COLOR_BLACK + space + SET_BG_COLOR_LIGHT_GREY + space);
+        if (white) {
+            for (int j = 0; j < 4; j++) {
+                if (sideNum % 2 == 0) {
+                    System.out.print(SET_BG_COLOR_WHITE + space + SET_BG_COLOR_BLACK + space);
+                } else {
+                    System.out.print(SET_BG_COLOR_BLACK + space + SET_BG_COLOR_WHITE + space);
+                }
             }
+        }
+        else {
+
         }
     }
 
