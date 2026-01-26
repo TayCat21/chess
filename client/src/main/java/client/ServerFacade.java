@@ -15,13 +15,21 @@ public class ServerFacade {
 
     private static final HttpClient httpClient = HttpClient.newHttpClient();
     private String serverUrl;
+    private String authToken;
 
     public ServerFacade(String url) throws Exception {
         this.serverUrl = url;
     }
 
+    protected String getUserAuth() {
+        return authToken;
+    }
+
+    protected void setUserAuth(String token) {
+        this.authToken = token;
+    }
+
     public ChessGame register(String username, String password, String email) throws ClientException {
-        System.out.println(username + " " + password + " " + email);
         var body = Map.of("username", username, "password", password, "email", email);
         var request = buildRequest("POST", "/user", body);
         var response = sendRequest(request);
@@ -29,14 +37,16 @@ public class ServerFacade {
     }
 
     public ChessGame login(String username, String password) throws ClientException {
-        System.out.println(username + " " + password);
         var body = Map.of("username", username, "password", password);
         var request = buildRequest("POST", "/session", body);
         var response = sendRequest(request);
         return handleResponse(response, ChessGame.class);
     }
 
-    public void logout() {
+    public ChessGame logout() throws ClientException {
+        var request = buildRequest("DELETE", "/session", null);
+        var response = sendRequest(request);
+        return handleResponse(response, ChessGame.class);
     }
 
 //    public RegisterResult listGames(registerRequest request) {
@@ -77,7 +87,8 @@ public class ServerFacade {
     }
 
     private <T> T handleResponse(HttpResponse<String> response, Class<T> responseClass) throws ClientException {
-        System.out.println("---Handling Request---");
+        System.out.println("---Handling Response---");
+        System.out.println(response.body());
         var status = response.statusCode();
         if (!isSuccessful(status)) {
             var body = response.body();
@@ -86,6 +97,12 @@ public class ServerFacade {
             }
 
             throw new ClientException(ClientException.fromHttpStatusCode(status), "other failure: " + status, false);
+        }
+
+        if (response.body() != null && response.body().contains("authToken")) {
+            AuthResponse auth = new Gson().fromJson(response.body(), AuthResponse.class);
+            String authToken = auth.authToken();
+            setUserAuth(authToken);
         }
 
         if (responseClass != null) {

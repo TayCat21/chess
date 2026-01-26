@@ -1,6 +1,7 @@
 package ui;
 
 import chess.ChessGame;
+import client.ClientException;
 import client.ServerFacade;
 import static ui.EscapeSequences.*;
 import java.util.ArrayList;
@@ -28,8 +29,12 @@ public class GameplayUI {
                     break;
 
                 case "leave":
-                    server.logout();
-                    playing = false;
+                    try {
+                        server.logout();
+                        playing = false;
+                    } catch (ClientException e) {
+                        System.out.println("Error Occurred: Couldn't logout");
+                    }
                     break;
                 case "quit":
                     System.out.print(SET_TEXT_COLOR_YELLOW);

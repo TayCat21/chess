@@ -78,8 +78,12 @@ public class PostLoginUI {
                     //print Games
                     break;
                 case "logout":
-                    server.logout();
-                    signedIn = false;
+                    try {
+                        server.logout();
+                        signedIn = false;
+                    } catch (ClientException e) {
+                        System.out.println(e.getMessage());
+                    }
                     break;
                 case "quit":
                     System.out.print(SET_TEXT_COLOR_YELLOW);
