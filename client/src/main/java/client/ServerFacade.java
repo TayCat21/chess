@@ -28,7 +28,12 @@ public class ServerFacade {
         return handleResponse(response, ChessGame.class);
     }
 
-    public void login(String username, String password) {
+    public ChessGame login(String username, String password) throws ClientException {
+        System.out.println(username + " " + password);
+        var body = Map.of("username", username, "password", password);
+        var request = buildRequest("POST", "/session", body);
+        var response = sendRequest(request);
+        return handleResponse(response, ChessGame.class);
     }
 
     public void logout() {
@@ -67,7 +72,7 @@ public class ServerFacade {
         try {
             return httpClient.send(request, HttpResponse.BodyHandlers.ofString());
         } catch (Exception ex) {
-            throw new ClientException(ClientException.Code.ServerError, ex.getMessage());
+            throw new ClientException(ClientException.Code.ServerError, ex.getMessage(), false);
         }
     }
 
@@ -80,7 +85,7 @@ public class ServerFacade {
                 throw ClientException.fromJson(body);
             }
 
-            throw new ClientException(ClientException.fromHttpStatusCode(status), "other failure: " + status);
+            throw new ClientException(ClientException.fromHttpStatusCode(status), "other failure: " + status, false);
         }
 
         if (responseClass != null) {

@@ -44,7 +44,7 @@ public class PreLoginUI {
                         signedIn = true;
                         break;
                     } catch(ClientException e) {
-                        System.out.println("registration failed: ");
+                        System.out.println("registration failed: " + e.getMessage());
                         break;
                     }
                 case "login":
@@ -54,17 +54,18 @@ public class PreLoginUI {
                         printHelp("login");
                     }
                     else {
-                        server.login(userInput[1], userInput[2]);
-                        signedIn = true;
+                        try {
+                            server.login(userInput[1], userInput[2]);
+                            System.out.println("Login successful");
+                            signedIn = true;
+                        } catch (ClientException e) {
+                            System.out.println("Login failed: " + e.getMessage());
+                        }
                     }
                     break;
                 case "quit":
                     System.out.print(SET_TEXT_COLOR_YELLOW);
                     return;
-                case "skip":
-                    signedIn = true;
-                    System.out.println("Skipped Login");
-                    break;
                 default:
                     System.out.println("Unknown Command -- Please try again");
                     printHelp("menu");

@@ -5,6 +5,7 @@ import ui.PreLoginUI;
 public class Main {
     public static void main(String[] args) throws Exception {
 
+        System.out.println("♕ 240 Chess Client");
         String serverUrl = "http://localhost:8080";
         ServerFacade server = new ServerFacade(serverUrl);
 

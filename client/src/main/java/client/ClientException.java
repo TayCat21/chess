@@ -15,21 +15,23 @@ public class ClientException extends Exception {
   }
 
   final private Code code;
+  private boolean status;
 
-  public ClientException(Code code, String message) {
+  public ClientException(Code code, String message, Boolean status) {
     super(message);
     this.code = code;
+    this.status = status;
   }
 
   public String toJson() {
-    return new Gson().toJson(Map.of("message", getMessage(), "status", code));
+    return new Gson().toJson(Map.of("message", getMessage(), "success", code));
   }
 
   public static ClientException fromJson(String json) {
     var map = new Gson().fromJson(json, HashMap.class);
-    var status = Code.valueOf(map.get("status").toString());
+    boolean status = (boolean) map.get("success");
     String message = map.get("message").toString();
-    return new ClientException(status, message);
+    return new ClientException(Code.ServerError, message, status);
   }
 
   public Code code() {
