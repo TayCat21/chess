@@ -8,7 +8,10 @@ import java.net.http.*;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.util.List;
 import java.util.Map;
+
+import static ui.EscapeSequences.*;
 
 
 public class ServerFacade {
@@ -49,10 +52,17 @@ public class ServerFacade {
         return handleResponse(response, ChessGame.class);
     }
 
-//    public RegisterResult listGames(registerRequest request) {
-//    }
-//
-    public void createGame(String name) {
+    public ChessGame listGames() throws ClientException {
+        var request = buildRequest("GET", "/game", null, getUserAuth());
+        var response = sendRequest(request);
+        return handleResponse(response, ChessGame.class);
+    }
+
+    public ChessGame createGame(String name) throws ClientException {
+        var body = Map.of("gameName", name);
+        var request = buildRequest("POST", "/game", body, getUserAuth());
+        var response = sendRequest(request);
+        return handleResponse(response, ChessGame.class);
     }
 //
 //    public RegisterResult joinGame(registerRequest request) {
@@ -105,6 +115,19 @@ public class ServerFacade {
             AuthResponse auth = new Gson().fromJson(response.body(), AuthResponse.class);
             String authToken = auth.authToken();
             setUserAuth(authToken);
+        }
+
+        if (response.body() != null && response.body().contains("games")) {
+            GameResponse listGame = new Gson().fromJson(response.body(), GameResponse.class);
+            List<ListGamesItem> gamesList = listGame.games();
+            for (int i = 1; i <= gamesList.size(); i++){
+                var gameItem = gamesList.get(i-1);
+                System.out.print(SET_TEXT_COLOR_WHITE + "[" + SET_TEXT_COLOR_GREEN + i + SET_TEXT_COLOR_WHITE + "] ");
+                System.out.print(SET_TEXT_COLOR_GREEN + gameItem.gameName() + SET_TEXT_COLOR_WHITE);
+                System.out.print(" - WHITE: " + SET_TEXT_COLOR_LIGHT_GREY + gameItem.whiteUsername());
+                System.out.println(SET_TEXT_COLOR_WHITE + " BLACK: " + SET_TEXT_COLOR_LIGHT_GREY
+                        + gameItem.blackUsername());
+            }
         }
 
         if (responseClass != null) {

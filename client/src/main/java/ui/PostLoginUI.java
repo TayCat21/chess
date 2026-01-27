@@ -40,8 +40,12 @@ public class PostLoginUI {
                         break;
                     }
 
-                    server.createGame(userInput[1]);
-                    System.out.printf("Created Game: %s%n", userInput[1]);
+                    try {
+                        server.createGame(userInput[1]);
+                        System.out.printf("Created Game: %s%n", userInput[1]);
+                    } catch (ClientException e) {
+                        System.out.println("Couldn't create game: " + e.getMessage());
+                    }
                     break;
                 case "join":
                     if (userInput.length != 3) {
@@ -75,7 +79,11 @@ public class PostLoginUI {
                     //handle observe
                     return;
                 case "list":
-                    //print Games
+                    try {
+                        server.listGames();
+                    } catch (ClientException e) {
+                        System.out.println("Couldn't List Games: " + e.getMessage());
+                    }
                     break;
                 case "logout":
                     try {
