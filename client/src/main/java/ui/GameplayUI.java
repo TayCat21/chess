@@ -2,16 +2,18 @@ package ui;
 
 import chess.ChessGame;
 import client.ClientException;
+import client.ListGamesItem;
 import client.ServerFacade;
 import static ui.EscapeSequences.*;
-import java.util.ArrayList;
 import java.util.Scanner;
 
 public class GameplayUI {
     ServerFacade server;
+    ListGamesItem currentGame;
 
-    public GameplayUI(ServerFacade server) {
+    public GameplayUI(ServerFacade server, ListGamesItem currentGame) {
         this.server = server;
+        this.currentGame = currentGame;
     }
 
     public void run() {
@@ -25,7 +27,6 @@ public class GameplayUI {
 
             switch (userInput[0].toLowerCase()) {
                 case "help":
-//                    printHelp("menu");
                     break;
 
                 case "leave":
@@ -36,7 +37,6 @@ public class GameplayUI {
                     return;
                 default:
                     System.out.println("Unknown Command -- Please try again");
-//                    printHelp("menu");
                     break;
             }
         }

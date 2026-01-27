@@ -2,10 +2,9 @@ package ui;
 
 import chess.ChessGame;
 import client.ClientException;
+import client.ListGamesItem;
 import client.ServerFacade;
-import model.Gamedata;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
@@ -13,11 +12,9 @@ import static ui.EscapeSequences.*;
 
 public class PostLoginUI {
     ServerFacade server;
-    List<Gamedata> myGames;
 
     public PostLoginUI(ServerFacade server) {
         this.server = server;
-        myGames = new ArrayList<>();
     }
 
     public void run() {
@@ -44,7 +41,7 @@ public class PostLoginUI {
                         server.createGame(userInput[1]);
                         System.out.printf("Created Game: %s%n", userInput[1]);
                     } catch (ClientException e) {
-                        System.out.println("Couldn't create game: " + e.getMessage());
+                        System.out.println(e.getMessage());
                     }
                     break;
                 case "join":
@@ -56,11 +53,20 @@ public class PostLoginUI {
                     try {
                         int myInt = Integer.parseInt(userInput[1]);
 
+                        if (server.getListSize() == 0) {
+                            System.out.println("View Game list to see available games");
+                            break;
+                        } else if(myInt < 0 || myInt > server.getListSize()) {
+                            System.out.println("Please input a valid Game ID from the Game List");
+                            break;
+                        }
+
+                        String colorChoice = userInput[2].toUpperCase();
                         ChessGame.TeamColor color;
-                        if ((userInput[2].toUpperCase()).equals("WHITE")) {
+                        if (colorChoice.equals("WHITE")) {
                             color = ChessGame.TeamColor.WHITE;
                         }
-                        else if ((userInput[2].toUpperCase()).equals("BLACK")) {
+                        else if (colorChoice.equals("BLACK")) {
                             color = ChessGame.TeamColor.BLACK;
                         }
                         else {
@@ -71,16 +77,19 @@ public class PostLoginUI {
                         }
 
                         try {
-                            server.joinGame(myInt, userInput[2]);
+                             server.joinGame(myInt, colorChoice);
                         } catch (ClientException e) {
                             System.out.println(e.getMessage());
                             break;
                         }
 
+                        List<ListGamesItem> gamesList = server.getUpdatedGames();
+                        var currentGame = gamesList.get(myInt-1);
 
+                        System.out.println(SET_TEXT_COLOR_GREEN + SET_TEXT_UNDERLINE + currentGame.gameName());
                         PrintGameBoard.printInitialBoard(color);
 
-                        GameplayUI gameplayUI = new GameplayUI(server);
+                        GameplayUI gameplayUI = new GameplayUI(server, currentGame);
                         gameplayUI.run();
                         break;
                     } catch (NumberFormatException e) {
@@ -94,6 +103,15 @@ public class PostLoginUI {
                 case "list":
                     try {
                         server.listGames();
+                        List<ListGamesItem> updatedGames = server.getUpdatedGames();
+                        for (int i = 1; i <= server.getListSize(); i++){
+                            var gameItem = updatedGames.get(i-1);
+                            System.out.print(SET_TEXT_COLOR_WHITE + "[" + SET_TEXT_COLOR_GREEN + i + SET_TEXT_COLOR_WHITE + "] ");
+                            System.out.print(SET_TEXT_COLOR_GREEN + gameItem.gameName() + SET_TEXT_COLOR_WHITE);
+                            System.out.print(" - WHITE: " + SET_TEXT_COLOR_LIGHT_GREY + gameItem.whiteUsername());
+                            System.out.println(SET_TEXT_COLOR_WHITE + " BLACK: " + SET_TEXT_COLOR_LIGHT_GREY
+                                    + gameItem.blackUsername());
+                        }
                     } catch (ClientException e) {
                         System.out.println("Couldn't List Games: " + e.getMessage());
                     }

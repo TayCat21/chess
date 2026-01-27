@@ -4,10 +4,10 @@ import chess.ChessGame;
 import com.google.gson.Gson;
 
 import java.net.*;
-import java.net.http.*;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -21,8 +21,9 @@ public class ServerFacade {
     private String authToken;
     private List<ListGamesItem> updatedGames;
 
-    public ServerFacade(String url) throws Exception {
+    public ServerFacade(String url) {
         this.serverUrl = url;
+        this.updatedGames = new ArrayList<>();
     }
 
     protected String getUserAuth() {
@@ -33,12 +34,12 @@ public class ServerFacade {
         this.authToken = token;
     }
 
-    protected List<ListGamesItem> getUpdatedGames() {
-        return updatedGames;
-    }
-
     protected void setUpdatedGames(List<ListGamesItem> updatedGames) {
         this.updatedGames = updatedGames;
+    }
+
+    public List<ListGamesItem> getUpdatedGames() {
+        return updatedGames;
     }
 
     public int getListSize() {
@@ -140,14 +141,6 @@ public class ServerFacade {
         if (response.body() != null && response.body().contains("games")) {
             GameResponse listGame = new Gson().fromJson(response.body(), GameResponse.class);
             setUpdatedGames(listGame.games());
-            for (int i = 1; i <= getListSize(); i++){
-                var gameItem = updatedGames.get(i-1);
-                System.out.print(SET_TEXT_COLOR_WHITE + "[" + SET_TEXT_COLOR_GREEN + i + SET_TEXT_COLOR_WHITE + "] ");
-                System.out.print(SET_TEXT_COLOR_GREEN + gameItem.gameName() + SET_TEXT_COLOR_WHITE);
-                System.out.print(" - WHITE: " + SET_TEXT_COLOR_LIGHT_GREY + gameItem.whiteUsername());
-                System.out.println(SET_TEXT_COLOR_WHITE + " BLACK: " + SET_TEXT_COLOR_LIGHT_GREY
-                        + gameItem.blackUsername());
-            }
         }
 
         if (responseClass != null) {

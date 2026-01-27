@@ -10,7 +10,7 @@ public class PrintGameBoard {
 
 
     public static void printInitialBoard(ChessGame.TeamColor color) {
-        System.out.println(RESET_BG_COLOR + RESET_TEXT_COLOR);
+        System.out.println(RESET_BG_COLOR + RESET_TEXT_COLOR + RESET_TEXT_UNDERLINE);
         String space = "   ";
         String ln = (RESET_BG_COLOR + "\n");
         System.out.print(SET_BG_COLOR_LIGHT_GREY + SET_TEXT_COLOR_BLACK + space);
