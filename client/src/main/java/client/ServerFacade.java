@@ -90,7 +90,6 @@ public class ServerFacade {
     }
 
     private HttpRequest buildRequest(String method, String path, Object body, String head) {
-        System.out.println("---Building Request---");
         var request = HttpRequest.newBuilder()
                 .uri(URI.create(serverUrl + path))
                 .method(method, makeRequestBody(body));
@@ -112,7 +111,6 @@ public class ServerFacade {
     }
 
     private HttpResponse<String> sendRequest(HttpRequest request) throws ClientException {
-        System.out.println("---Sending Request---");
         try {
             return httpClient.send(request, HttpResponse.BodyHandlers.ofString());
         } catch (Exception ex) {
@@ -121,7 +119,6 @@ public class ServerFacade {
     }
 
     private <T> T handleResponse(HttpResponse<String> response, Class<T> responseClass) throws ClientException {
-        System.out.println("---Handling Response---");
         var status = response.statusCode();
         if (!isSuccessful(status)) {
             var body = response.body();

@@ -27,6 +27,7 @@ public class GameplayUI {
 
             switch (userInput[0].toLowerCase()) {
                 case "help":
+                    System.out.println("type 'leave' to return to menu");
                     break;
 
                 case "leave":

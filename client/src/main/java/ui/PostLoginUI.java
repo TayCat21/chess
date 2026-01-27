@@ -50,56 +50,58 @@ public class PostLoginUI {
                         printHelp("join");
                         break;
                     }
-                    try {
-                        int myInt = Integer.parseInt(userInput[1]);
 
-                        if (server.getListSize() == 0) {
-                            System.out.println("View Game list to see available games");
-                            break;
-                        } else if(myInt < 0 || myInt > server.getListSize()) {
-                            System.out.println("Please input a valid Game ID from the Game List");
-                            break;
-                        }
-
-                        String colorChoice = userInput[2].toUpperCase();
-                        ChessGame.TeamColor color;
-                        if (colorChoice.equals("WHITE")) {
-                            color = ChessGame.TeamColor.WHITE;
-                        }
-                        else if (colorChoice.equals("BLACK")) {
-                            color = ChessGame.TeamColor.BLACK;
-                        }
-                        else {
-                            System.out.println("Color Selection not recognized. Select either"
-                                    + SET_TEXT_COLOR_BLUE + " WHITE" + SET_TEXT_COLOR_LIGHT_GREY + " or"
-                                    + SET_TEXT_COLOR_BLUE + " BLACK" + SET_TEXT_COLOR_LIGHT_GREY);
-                            break;
-                        }
-
-                        try {
-                             server.joinGame(myInt, colorChoice);
-                        } catch (ClientException e) {
-                            System.out.println(e.getMessage());
-                            break;
-                        }
-
-                        List<ListGamesItem> gamesList = server.getUpdatedGames();
-                        var currentGame = gamesList.get(myInt-1);
-
-                        System.out.println(SET_TEXT_COLOR_GREEN + SET_TEXT_UNDERLINE + currentGame.gameName());
-                        PrintGameBoard.printInitialBoard(color);
-
-                        GameplayUI gameplayUI = new GameplayUI(server, currentGame);
-                        gameplayUI.run();
-                        break;
-                    } catch (NumberFormatException e) {
-                        System.out.println("Please input a valid Game ID from the Game List");
+                    int gameID = validID(userInput[1]);
+                    if (gameID == 0) {
                         printHelp("join");
+                        System.out.println(SET_TEXT_COLOR_BLUE + "list" + SET_TEXT_COLOR_LIGHT_GREY);
                         break;
                     }
+
+                    String colorChoice = userInput[2].toUpperCase();
+                    ChessGame.TeamColor color;
+                    if (colorChoice.equals("WHITE")) {
+                        color = ChessGame.TeamColor.WHITE;
+                    }
+                    else if (colorChoice.equals("BLACK")) {
+                        color = ChessGame.TeamColor.BLACK;
+                    }
+                    else {
+                        System.out.println("Color Selection not recognized. Select either"
+                                + SET_TEXT_COLOR_BLUE + " WHITE" + SET_TEXT_COLOR_LIGHT_GREY + " or"
+                                + SET_TEXT_COLOR_BLUE + " BLACK" + SET_TEXT_COLOR_LIGHT_GREY);
+                        break;
+                    }
+
+                    try {
+                        server.joinGame(gameID, colorChoice);
+                    } catch (ClientException e) {
+                        System.out.println(e.getMessage());
+                        break;
+                    }
+
+                    var currentGame = printBoard(color, gameID);
+
+                    GameplayUI gameplayUI = new GameplayUI(server, currentGame);
+                    gameplayUI.run();
+                    break;
+
                 case "observe":
-                    //handle observe
-                    return;
+                    if (userInput.length != 2) {
+                        System.out.println("Input a Game ID with the initial statement:");
+                        printHelp("observe");
+                        break;
+                    }
+
+                    int observeID = validID(userInput[1]);
+                    if (observeID == 0) {
+                        printHelp("observe");
+                        System.out.println(SET_TEXT_COLOR_BLUE + "list" + SET_TEXT_COLOR_LIGHT_GREY);
+                        break;
+                    }
+
+                    printBoard(ChessGame.TeamColor.WHITE, observeID);
+                    break;
                 case "list":
                     try {
                         server.listGames();
@@ -137,6 +139,37 @@ public class PostLoginUI {
             PreLoginUI preLoginUI  = new PreLoginUI(server);
             preLoginUI.run();
         }
+    }
+
+    private int validID(String gameID) {
+        try {
+            int myInt = Integer.parseInt(gameID);
+
+            if (server.getListSize() == 0) {
+                System.out.println("View Game list to see available games");
+                return 0;
+            } else if (myInt <= 0 || myInt > server.getListSize()) {
+                System.out.println("Please input a valid Game ID from the Game List");
+                return 0;
+            }
+
+            return myInt;
+        } catch (NumberFormatException e) {
+            System.out.println("Please input a Game ID Number from the Game List");
+        }
+        return 0;
+    }
+
+    private ListGamesItem printBoard(ChessGame.TeamColor color, int gameID) {
+        List<ListGamesItem> gamesList = server.getUpdatedGames();
+        var currentGame = gamesList.get(gameID-1);
+
+        System.out.print("\n          ");
+        System.out.println(SET_TEXT_COLOR_GREEN + SET_TEXT_UNDERLINE + currentGame.gameName());
+        PrintGameBoard.printInitialBoard(color);
+        System.out.println(RESET_TEXT_COLOR + RESET_BG_COLOR);
+
+        return currentGame;
     }
 
     private void printHelp(String output) {
