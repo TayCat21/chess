@@ -37,3 +37,4 @@ public class ClientException extends Exception {
       default -> throw new IllegalArgumentException("Unknown HTTP status code: " + httpStatusCode);
     };
   }
+}
