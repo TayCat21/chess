@@ -11,12 +11,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import static ui.EscapeSequences.*;
-
 
 public class ServerFacade {
 
-    private static final HttpClient httpClient = HttpClient.newHttpClient();
+    private static final HttpClient HTTP_CLIENT = HttpClient.newHttpClient();
     private String serverUrl;
     private String authToken;
     private List<ListGamesItem> updatedGames;
@@ -119,7 +117,7 @@ public class ServerFacade {
 
     private HttpResponse<String> sendRequest(HttpRequest request) throws ClientException {
         try {
-            return httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+            return HTTP_CLIENT.send(request, HttpResponse.BodyHandlers.ofString());
         } catch (Exception ex) {
             throw new ClientException(ClientException.Code.ServerError, ex.getMessage(), false);
         }

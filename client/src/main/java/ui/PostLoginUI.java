@@ -20,12 +20,10 @@ public class PostLoginUI {
     public void run() {
         System.out.print(RESET_TEXT_COLOR + RESET_BG_COLOR);
         boolean signedIn = true;
-
         while (signedIn) {
             Scanner scanner = new Scanner(System.in);
             System.out.print(SET_TEXT_COLOR_WHITE + "\n[LOGGED_IN] >>> " + SET_TEXT_COLOR_LIGHT_GREY);
             String[] userInput = scanner.nextLine().split(" ");
-
             switch (userInput[0].toLowerCase()) {
                 case "help":
                     printHelp("menu");
@@ -36,7 +34,6 @@ public class PostLoginUI {
                         printHelp("create");
                         break;
                     }
-
                     try {
                         server.createGame(userInput[1]);
                         System.out.printf("Created Game: %s%n", userInput[1]);
@@ -50,14 +47,12 @@ public class PostLoginUI {
                         printHelp("join");
                         break;
                     }
-
                     int gameID = validID(userInput[1]);
                     if (gameID == 0) {
                         printHelp("join");
                         System.out.println(SET_TEXT_COLOR_BLUE + "list" + SET_TEXT_COLOR_LIGHT_GREY);
                         break;
                     }
-
                     String colorChoice = userInput[2].toUpperCase();
                     ChessGame.TeamColor color;
                     if (colorChoice.equals("WHITE")) {
@@ -72,51 +67,32 @@ public class PostLoginUI {
                                 + SET_TEXT_COLOR_BLUE + " BLACK" + SET_TEXT_COLOR_LIGHT_GREY);
                         break;
                     }
-
                     try {
                         server.joinGame(gameID, colorChoice);
                     } catch (ClientException e) {
                         System.out.println(e.getMessage());
                         break;
                     }
-
                     var currentGame = printBoard(color, gameID);
-
                     GameplayUI gameplayUI = new GameplayUI(server, currentGame);
                     gameplayUI.run();
                     break;
-
                 case "observe":
                     if (userInput.length != 2) {
                         System.out.println("Input a Game ID with the initial statement:");
                         printHelp("observe");
                         break;
                     }
-
                     int observeID = validID(userInput[1]);
                     if (observeID == 0) {
                         printHelp("observe");
                         System.out.println(SET_TEXT_COLOR_BLUE + "list" + SET_TEXT_COLOR_LIGHT_GREY);
                         break;
                     }
-
                     printBoard(ChessGame.TeamColor.WHITE, observeID);
                     break;
                 case "list":
-                    try {
-                        server.listGames();
-                        List<ListGamesItem> updatedGames = server.getUpdatedGames();
-                        for (int i = 1; i <= server.getListSize(); i++){
-                            var gameItem = updatedGames.get(i-1);
-                            System.out.print(SET_TEXT_COLOR_WHITE + "[" + SET_TEXT_COLOR_GREEN + i + SET_TEXT_COLOR_WHITE + "] ");
-                            System.out.print(SET_TEXT_COLOR_GREEN + gameItem.gameName() + SET_TEXT_COLOR_WHITE);
-                            System.out.print(" - WHITE: " + SET_TEXT_COLOR_LIGHT_GREY + gameItem.whiteUsername());
-                            System.out.println(SET_TEXT_COLOR_WHITE + " BLACK: " + SET_TEXT_COLOR_LIGHT_GREY
-                                    + gameItem.blackUsername());
-                        }
-                    } catch (ClientException e) {
-                        System.out.println("Couldn't List Games: " + e.getMessage());
-                    }
+                    doList();
                     break;
                 case "logout":
                     try {
@@ -138,6 +114,23 @@ public class PostLoginUI {
         if (!signedIn) {
             PreLoginUI preLoginUI  = new PreLoginUI(server);
             preLoginUI.run();
+        }
+    }
+
+    private void doList() {
+        try {
+            server.listGames();
+            List<ListGamesItem> updatedGames = server.getUpdatedGames();
+            for (int i = 1; i <= server.getListSize(); i++){
+                var gameItem = updatedGames.get(i-1);
+                System.out.print(SET_TEXT_COLOR_WHITE + "[" + SET_TEXT_COLOR_GREEN + i + SET_TEXT_COLOR_WHITE + "] ");
+                System.out.print(SET_TEXT_COLOR_GREEN + gameItem.gameName() + SET_TEXT_COLOR_WHITE);
+                System.out.print(" - WHITE: " + SET_TEXT_COLOR_LIGHT_GREY + gameItem.whiteUsername());
+                System.out.println(SET_TEXT_COLOR_WHITE + " BLACK: " + SET_TEXT_COLOR_LIGHT_GREY
+                        + gameItem.blackUsername());
+            }
+        } catch (ClientException e) {
+            System.out.println("Couldn't List Games: " + e.getMessage());
         }
     }
 

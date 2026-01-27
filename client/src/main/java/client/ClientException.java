@@ -23,19 +23,11 @@ public class ClientException extends Exception {
     this.status = status;
   }
 
-  public String toJson() {
-    return new Gson().toJson(Map.of("message", getMessage(), "success", code));
-  }
-
   public static ClientException fromJson(String json) {
     var map = new Gson().fromJson(json, HashMap.class);
     boolean status = (boolean) map.get("success");
     String message = map.get("message").toString();
     return new ClientException(Code.ServerError, message, status);
-  }
-
-  public Code code() {
-    return code;
   }
 
   public static Code fromHttpStatusCode(int httpStatusCode) {
@@ -45,11 +37,3 @@ public class ClientException extends Exception {
       default -> throw new IllegalArgumentException("Unknown HTTP status code: " + httpStatusCode);
     };
   }
-
-  public int toHttpStatusCode() {
-    return switch (code) {
-      case ServerError -> 500;
-      case ClientError -> 400;
-    };
-  }
-}
