@@ -29,12 +29,7 @@ public class GameplayUI {
                     break;
 
                 case "leave":
-                    try {
-                        server.logout();
-                        playing = false;
-                    } catch (ClientException e) {
-                        System.out.println("Error Occurred: Couldn't logout");
-                    }
+                    playing = false;
                     break;
                 case "quit":
                     System.out.print(SET_TEXT_COLOR_YELLOW);

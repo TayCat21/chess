@@ -19,6 +19,7 @@ public class ServerFacade {
     private static final HttpClient httpClient = HttpClient.newHttpClient();
     private String serverUrl;
     private String authToken;
+    private List<ListGamesItem> updatedGames;
 
     public ServerFacade(String url) throws Exception {
         this.serverUrl = url;
@@ -30,6 +31,21 @@ public class ServerFacade {
 
     protected void setUserAuth(String token) {
         this.authToken = token;
+    }
+
+    protected List<ListGamesItem> getUpdatedGames() {
+        return updatedGames;
+    }
+
+    protected void setUpdatedGames(List<ListGamesItem> updatedGames) {
+        this.updatedGames = updatedGames;
+    }
+
+    public int getListSize() {
+        if (updatedGames.isEmpty()) {
+            return 0;
+        }
+        return updatedGames.size();
     }
 
     public ChessGame register(String username, String password, String email) throws ClientException {
@@ -64,9 +80,13 @@ public class ServerFacade {
         var response = sendRequest(request);
         return handleResponse(response, ChessGame.class);
     }
-//
-//    public RegisterResult joinGame(registerRequest request) {
-//    }
+
+    public ChessGame joinGame(int gameID, String playerColor) throws ClientException {
+        var body = Map.of("gameID", gameID, "playerColor", playerColor);
+        var request = buildRequest("PUT", "/game", body, getUserAuth());
+        var response = sendRequest(request);
+        return handleResponse(response, ChessGame.class);
+    }
 
     private HttpRequest buildRequest(String method, String path, Object body, String head) {
         System.out.println("---Building Request---");
@@ -119,9 +139,9 @@ public class ServerFacade {
 
         if (response.body() != null && response.body().contains("games")) {
             GameResponse listGame = new Gson().fromJson(response.body(), GameResponse.class);
-            List<ListGamesItem> gamesList = listGame.games();
-            for (int i = 1; i <= gamesList.size(); i++){
-                var gameItem = gamesList.get(i-1);
+            setUpdatedGames(listGame.games());
+            for (int i = 1; i <= getListSize(); i++){
+                var gameItem = updatedGames.get(i-1);
                 System.out.print(SET_TEXT_COLOR_WHITE + "[" + SET_TEXT_COLOR_GREEN + i + SET_TEXT_COLOR_WHITE + "] ");
                 System.out.print(SET_TEXT_COLOR_GREEN + gameItem.gameName() + SET_TEXT_COLOR_WHITE);
                 System.out.print(" - WHITE: " + SET_TEXT_COLOR_LIGHT_GREY + gameItem.whiteUsername());

@@ -53,28 +53,41 @@ public class PostLoginUI {
                         printHelp("join");
                         break;
                     }
+                    try {
+                        int myInt = Integer.parseInt(userInput[1]);
 
-                    //Check valid ID
+                        ChessGame.TeamColor color;
+                        if ((userInput[2].toUpperCase()).equals("WHITE")) {
+                            color = ChessGame.TeamColor.WHITE;
+                        }
+                        else if ((userInput[2].toUpperCase()).equals("BLACK")) {
+                            color = ChessGame.TeamColor.BLACK;
+                        }
+                        else {
+                            System.out.println("Color Selection not recognized. Select either"
+                                    + SET_TEXT_COLOR_BLUE + " WHITE" + SET_TEXT_COLOR_LIGHT_GREY + " or"
+                                    + SET_TEXT_COLOR_BLUE + " BLACK" + SET_TEXT_COLOR_LIGHT_GREY);
+                            break;
+                        }
 
-                    ChessGame.TeamColor color;
-                    if ((userInput[2].toUpperCase()).equals("WHITE")) {
-                        color = ChessGame.TeamColor.WHITE;
-                    }
-                    else if ((userInput[2].toUpperCase()).equals("BLACK")) {
-                        color = ChessGame.TeamColor.BLACK;
-                    }
-                    else {
-                        System.out.println("Color Selection not recognized. Select either"
-                                + SET_TEXT_COLOR_BLUE + " WHITE" + SET_TEXT_COLOR_LIGHT_GREY + " or"
-                                + SET_TEXT_COLOR_BLUE + " BLACK" + SET_TEXT_COLOR_LIGHT_GREY);
+                        try {
+                            server.joinGame(myInt, userInput[2]);
+                        } catch (ClientException e) {
+                            System.out.println(e.getMessage());
+                            break;
+                        }
+
+
+                        PrintGameBoard.printInitialBoard(color);
+
+                        GameplayUI gameplayUI = new GameplayUI(server);
+                        gameplayUI.run();
+                        break;
+                    } catch (NumberFormatException e) {
+                        System.out.println("Please input a valid Game ID from the Game List");
+                        printHelp("join");
                         break;
                     }
-
-                    PrintGameBoard.printInitialBoard(color);
-
-                    GameplayUI gameplayUI = new GameplayUI(server);
-                    gameplayUI.run();
-                    break;
                 case "observe":
                     //handle observe
                     return;
