@@ -66,6 +66,7 @@ public class ServerFacade {
     public ChessGame logout() throws ClientException {
         var request = buildRequest("DELETE", "/session", null, getUserAuth());
         var response = sendRequest(request);
+        setUserAuth(null);
         return handleResponse(response, ChessGame.class);
     }
 
@@ -87,6 +88,12 @@ public class ServerFacade {
         var request = buildRequest("PUT", "/game", body, getUserAuth());
         var response = sendRequest(request);
         return handleResponse(response, ChessGame.class);
+    }
+
+    public void clear() throws ClientException {
+        var request = buildRequest("DELETE", "/db", null, null);
+        var response = sendRequest(request);
+        handleResponse(response, ChessGame.class);
     }
 
     private HttpRequest buildRequest(String method, String path, Object body, String head) {
