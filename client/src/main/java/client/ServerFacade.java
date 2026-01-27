@@ -31,20 +31,20 @@ public class ServerFacade {
 
     public ChessGame register(String username, String password, String email) throws ClientException {
         var body = Map.of("username", username, "password", password, "email", email);
-        var request = buildRequest("POST", "/user", body);
+        var request = buildRequest("POST", "/user", body, null);
         var response = sendRequest(request);
         return handleResponse(response, ChessGame.class);
     }
 
     public ChessGame login(String username, String password) throws ClientException {
         var body = Map.of("username", username, "password", password);
-        var request = buildRequest("POST", "/session", body);
+        var request = buildRequest("POST", "/session", body, null);
         var response = sendRequest(request);
         return handleResponse(response, ChessGame.class);
     }
 
     public ChessGame logout() throws ClientException {
-        var request = buildRequest("DELETE", "/session", null);
+        var request = buildRequest("DELETE", "/session", null, getUserAuth());
         var response = sendRequest(request);
         return handleResponse(response, ChessGame.class);
     }
@@ -58,18 +58,21 @@ public class ServerFacade {
 //    public RegisterResult joinGame(registerRequest request) {
 //    }
 
-    private HttpRequest buildRequest(String method, String path, Object body) {
+    private HttpRequest buildRequest(String method, String path, Object body, String head) {
         System.out.println("---Building Request---");
-        var request = HttpRequest.newBuilder().uri(URI.create(serverUrl + path))
+        var request = HttpRequest.newBuilder()
+                .uri(URI.create(serverUrl + path))
                 .method(method, makeRequestBody(body));
         if (body != null) {
             request.setHeader("Content-Type", "application/json");
+        }
+        if (head != null) {
+            request.header("authorization", head);
         }
         return request.build();
     }
 
     private HttpRequest.BodyPublisher makeRequestBody(Object request) {
-        System.out.println("---Building Request Body---");
         if (request != null) {
             return HttpRequest.BodyPublishers.ofString(new Gson().toJson(request));
         } else {
@@ -88,7 +91,6 @@ public class ServerFacade {
 
     private <T> T handleResponse(HttpResponse<String> response, Class<T> responseClass) throws ClientException {
         System.out.println("---Handling Response---");
-        System.out.println(response.body());
         var status = response.statusCode();
         if (!isSuccessful(status)) {
             var body = response.body();
