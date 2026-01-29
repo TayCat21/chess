@@ -29,17 +29,53 @@ public class GameplayUI {
                 case "help":
                     System.out.println("type 'leave' to return to menu");
                     break;
-
+                case "redraw chess board":
+                    break;
                 case "leave":
                     playing = false;
                     break;
-                case "quit":
-                    System.out.print(SET_TEXT_COLOR_YELLOW);
-                    return;
+                case "make move":
+                    break;
+                case "resign":
+                    break;
+                case "highlight legal moves":
+                    break;
                 default:
                     System.out.println("Unknown Command -- Please try again");
                     break;
             }
         }
     }
+
+    private void printHelp(String output) {
+        String createPrint = (SET_TEXT_COLOR_BLUE + "create <NAME>");
+        String joinPrint = (SET_TEXT_COLOR_BLUE + "join <ID> [WHITE|BLACK]");
+        String observePrint = (SET_TEXT_COLOR_BLUE + "observe <ID>");
+
+        switch (output) {
+            case "create":
+                System.out.println(createPrint);
+                break;
+            case "join":
+                System.out.println(joinPrint);
+                break;
+            case "observe":
+                System.out.println(observePrint);
+                break;
+            case "menu":
+                System.out.println(createPrint + SET_TEXT_COLOR_LIGHT_GREY + " - to create a new game");
+                System.out.println(SET_TEXT_COLOR_BLUE + "list" +
+                        SET_TEXT_COLOR_LIGHT_GREY + " - to view all games");
+                System.out.println(joinPrint + SET_TEXT_COLOR_LIGHT_GREY + " - to join a game");
+                System.out.println(observePrint + SET_TEXT_COLOR_LIGHT_GREY + " - to watch a game");
+                System.out.println(SET_TEXT_COLOR_BLUE + "logout" +
+                        SET_TEXT_COLOR_LIGHT_GREY + " - to sign out of the program");
+                System.out.println(SET_TEXT_COLOR_BLUE + "quit" +
+                        SET_TEXT_COLOR_LIGHT_GREY + " - to close the program");
+                System.out.println(SET_TEXT_COLOR_BLUE + "help" +
+                        SET_TEXT_COLOR_LIGHT_GREY + " - to display possible commands");
+                break;
+        }
+    }
+
 }

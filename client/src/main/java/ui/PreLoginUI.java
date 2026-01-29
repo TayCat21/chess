@@ -42,6 +42,7 @@ public class PreLoginUI {
                         server.register(userInput[1], userInput[2], userInput[3]);
                         System.out.println("registration successful");
                         signedIn = true;
+                        System.out.println(SET_TEXT_COLOR_YELLOW + "\n Welcome " + userInput[1]);
                         break;
                     } catch(ClientException e) {
                         System.out.println("registration failed: " + e.getMessage());
@@ -58,6 +59,7 @@ public class PreLoginUI {
                             server.login(userInput[1], userInput[2]);
                             System.out.println("Login successful");
                             signedIn = true;
+                            System.out.println(SET_TEXT_COLOR_YELLOW + "\n Welcome " + userInput[1]);
                         } catch (ClientException e) {
                             System.out.println("Login failed: " + e.getMessage());
                         }
