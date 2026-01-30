@@ -27,12 +27,13 @@ public class GameplayUI {
 
             switch (userInput[0].toLowerCase()) {
                 case "help":
-                    System.out.println("type 'leave' to return to menu");
+                    printHelp();
                     break;
                 case "redraw chess board":
                     break;
                 case "leave":
                     playing = false;
+                    System.out.println("\nLeaving Game");
                     break;
                 case "make move":
                     break;
@@ -42,40 +43,25 @@ public class GameplayUI {
                     break;
                 default:
                     System.out.println("Unknown Command -- Please try again");
+                    printHelp();
                     break;
             }
         }
     }
 
-    private void printHelp(String output) {
-        String createPrint = (SET_TEXT_COLOR_BLUE + "create <NAME>");
-        String joinPrint = (SET_TEXT_COLOR_BLUE + "join <ID> [WHITE|BLACK]");
-        String observePrint = (SET_TEXT_COLOR_BLUE + "observe <ID>");
-
-        switch (output) {
-            case "create":
-                System.out.println(createPrint);
-                break;
-            case "join":
-                System.out.println(joinPrint);
-                break;
-            case "observe":
-                System.out.println(observePrint);
-                break;
-            case "menu":
-                System.out.println(createPrint + SET_TEXT_COLOR_LIGHT_GREY + " - to create a new game");
-                System.out.println(SET_TEXT_COLOR_BLUE + "list" +
-                        SET_TEXT_COLOR_LIGHT_GREY + " - to view all games");
-                System.out.println(joinPrint + SET_TEXT_COLOR_LIGHT_GREY + " - to join a game");
-                System.out.println(observePrint + SET_TEXT_COLOR_LIGHT_GREY + " - to watch a game");
-                System.out.println(SET_TEXT_COLOR_BLUE + "logout" +
-                        SET_TEXT_COLOR_LIGHT_GREY + " - to sign out of the program");
-                System.out.println(SET_TEXT_COLOR_BLUE + "quit" +
-                        SET_TEXT_COLOR_LIGHT_GREY + " - to close the program");
-                System.out.println(SET_TEXT_COLOR_BLUE + "help" +
-                        SET_TEXT_COLOR_LIGHT_GREY + " - to display possible commands");
-                break;
-        }
+    private void printHelp() {
+        System.out.println(SET_TEXT_COLOR_BLUE + "make move" +
+                SET_TEXT_COLOR_LIGHT_GREY + " - to play a chess piece");
+        System.out.println(SET_TEXT_COLOR_BLUE + "highlight legal moves" +
+                SET_TEXT_COLOR_LIGHT_GREY + " - to view possible moves for a piece");
+        System.out.println(SET_TEXT_COLOR_BLUE + "redraw chess board" +
+                SET_TEXT_COLOR_LIGHT_GREY + " - to display current board state");
+        System.out.println(SET_TEXT_COLOR_BLUE + "resign" +
+                SET_TEXT_COLOR_LIGHT_GREY + " - to forfeit the game");
+        System.out.println(SET_TEXT_COLOR_BLUE + "leave" +
+                SET_TEXT_COLOR_LIGHT_GREY + " - to close the game");
+        System.out.println(SET_TEXT_COLOR_BLUE + "help" +
+                SET_TEXT_COLOR_LIGHT_GREY + " - to display possible commands");
     }
 
 }
