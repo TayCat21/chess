@@ -31,18 +31,6 @@ public class PrintGameBoard {
         }
     }
 
-    public String getPiece(int row, int col) {
-        ChessPosition position = new ChessPosition(row, col);
-        var board = game.getBoard();
-        var piece = board.getPiece(position);
-
-        switch (piece.getPieceType()) {
-            case ChessPiece.PieceType.KING:
-
-        }
-        return "";
-    }
-
     public static void printBoard(ChessGame.TeamColor color) {
         System.out.println(RESET_BG_COLOR + RESET_TEXT_COLOR + RESET_TEXT_UNDERLINE);
         var board = game.getBoard();
@@ -50,20 +38,61 @@ public class PrintGameBoard {
 
         printBoarder(true);
 
+        int colorRow = 0;
         int row = (color == ChessGame.TeamColor.WHITE) ? 8 : 1;
         int plusMinus = (color == ChessGame.TeamColor.WHITE) ? -1 : 1;
         for (int sideNum = 8; sideNum > 0; sideNum--) {
             System.out.print(SET_BG_COLOR_LIGHT_GREY + SET_TEXT_COLOR_BLACK + " " + (row) + " ");
-            String rowColor = (row % 2 == 0) ? SET_BG_COLOR_WHITE : SET_BG_COLOR_BLACK;
-            for (int col = 0; col < 8; col++) {
-                String squareColor = (col % 2 == 0) ? SET_BG_COLOR_WHITE : SET_BG_COLOR_BLACK;
+            String rowColor = (colorRow % 2 == 0) ? SET_BG_COLOR_WHITE : SET_BG_COLOR_BLACK;
+            String opColor = (colorRow % 2 == 0) ? SET_BG_COLOR_BLACK : SET_BG_COLOR_WHITE;
+            for (int col = 1; col <= 8; col++) {
+                String squareColor = (col % 2 == 0) ? rowColor : opColor;
+                ChessPiece piece = board.getPiece(new ChessPosition(row, col));
+                String printSquare = getSquare(piece, squareColor);
+                System.out.print(printSquare);
             }
-
-
             System.out.print(SET_BG_COLOR_LIGHT_GREY + SET_TEXT_COLOR_BLACK + " " + (row) + " " + ln);
             row = row + plusMinus;
         }
 
+    }
+
+    public static String getSquare(ChessPiece piece, String colorBG) {
+        if (piece == null) {
+            return (colorBG + "   ");
+        }
+        String pieceColor = pColorCheck(piece);
+        String pieceType = pTypeCheck(piece);
+        return (colorBG + pieceColor + pieceType);
+    }
+
+    public static String pColorCheck(ChessPiece piece) {
+        switch (piece.getTeamColor()) {
+            case ChessGame.TeamColor.WHITE:
+                return SET_TEXT_COLOR_RED;
+
+            case ChessGame.TeamColor.BLACK:
+                return SET_TEXT_COLOR_BLUE;
+        }
+        return null;
+    }
+
+    public static String pTypeCheck(ChessPiece piece) {
+        switch (piece.getPieceType()) {
+            case KING:
+                return " K ";
+            case QUEEN:
+                return " Q ";
+            case ROOK:
+                return " R ";
+            case KNIGHT:
+                return " N ";
+            case BISHOP:
+                return " B ";
+            case PAWN:
+                return " P ";
+        }
+        return null;
     }
 
     public static void printInitialBoard(ChessGame.TeamColor color) {
