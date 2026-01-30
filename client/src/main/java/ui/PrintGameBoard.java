@@ -4,19 +4,23 @@ import chess.ChessGame;
 import static ui.EscapeSequences.*;
 
 public class PrintGameBoard {
+    ChessGame game;
 
+    public PrintGameBoard(ChessGame game) {
+        this.game = game;
+    }
 
-    public PrintGameBoard() {}
+    public void uploadGame(ChessGame game) {
+        this.game = game;
+    }
 
 
     public static void printInitialBoard(ChessGame.TeamColor color) {
         System.out.println(RESET_BG_COLOR + RESET_TEXT_COLOR + RESET_TEXT_UNDERLINE);
-        String space = "   ";
         String ln = (RESET_BG_COLOR + "\n");
-        System.out.print(SET_BG_COLOR_LIGHT_GREY + SET_TEXT_COLOR_BLACK + space);
 
         if (color == ChessGame.TeamColor.WHITE) {
-            System.out.print(" a  b  c  d  e  f  g  h " + space + ln);
+            printBoarder(true);
 
             int sideNum = 8;
             String backRow = "RNBQKBRN";
@@ -46,12 +50,11 @@ public class PrintGameBoard {
             printBackRow(true, backRow, false);
             System.out.print(SET_BG_COLOR_LIGHT_GREY + SET_TEXT_COLOR_BLACK + " " + sideNum + " " + ln);
 
-            System.out.print(SET_BG_COLOR_LIGHT_GREY + SET_TEXT_COLOR_BLACK + space
-                    + " a  b  c  d  e  f  g  h " + space);
+            printBoarder(true);
         }
         else if (color == ChessGame.TeamColor.BLACK) {
 
-            System.out.print(" h  g  f  e  d  c  b  a " + space + ln);
+            printBoarder(false);
 
             int sideNum = 1;
             String backRow = "RNBKQBRN";
@@ -81,12 +84,24 @@ public class PrintGameBoard {
             printBackRow(true, backRow, true);
             System.out.print(SET_BG_COLOR_LIGHT_GREY + SET_TEXT_COLOR_BLACK + " " + sideNum + " " + ln);
 
-            System.out.print(SET_BG_COLOR_LIGHT_GREY + SET_TEXT_COLOR_BLACK + space
-                    + " h  g  f  e  d  c  b  a " + space);
+            printBoarder(false);
 
         }
         else {
             System.out.println("Initial Board Called without defined color");
+        }
+    }
+
+    static void printBoarder(Boolean white) {
+        String space = "   ";
+        String ln = (RESET_BG_COLOR + "\n");
+        if (!white) {
+            System.out.print(SET_BG_COLOR_LIGHT_GREY + SET_TEXT_COLOR_BLACK + space
+                    + " h  g  f  e  d  c  b  a " + space + ln);
+        }
+        else {
+            System.out.print(SET_BG_COLOR_LIGHT_GREY + SET_TEXT_COLOR_BLACK + space
+                    + " a  b  c  d  e  f  g  h " + space + ln);
         }
     }
 
