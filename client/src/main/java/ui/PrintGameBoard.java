@@ -1,10 +1,13 @@
 package ui;
 
 import chess.ChessGame;
+import chess.ChessPiece;
+import chess.ChessPosition;
+
 import static ui.EscapeSequences.*;
 
 public class PrintGameBoard {
-    ChessGame game;
+    static ChessGame game;
 
     public PrintGameBoard(ChessGame game) {
         this.game = game;
@@ -15,6 +18,54 @@ public class PrintGameBoard {
     }
 
 
+    static void printBoarder(Boolean white) {
+        String space = "   ";
+        String ln = (RESET_BG_COLOR + "\n");
+        if (!white) {
+            System.out.print(SET_BG_COLOR_LIGHT_GREY + SET_TEXT_COLOR_BLACK + space
+                    + " h  g  f  e  d  c  b  a " + space + ln);
+        }
+        else {
+            System.out.print(SET_BG_COLOR_LIGHT_GREY + SET_TEXT_COLOR_BLACK + space
+                    + " a  b  c  d  e  f  g  h " + space + ln);
+        }
+    }
+
+    public String getPiece(int row, int col) {
+        ChessPosition position = new ChessPosition(row, col);
+        var board = game.getBoard();
+        var piece = board.getPiece(position);
+
+        switch (piece.getPieceType()) {
+            case ChessPiece.PieceType.KING:
+
+        }
+        return "";
+    }
+
+    public static void printBoard(ChessGame.TeamColor color) {
+        System.out.println(RESET_BG_COLOR + RESET_TEXT_COLOR + RESET_TEXT_UNDERLINE);
+        var board = game.getBoard();
+        String ln = (RESET_BG_COLOR + "\n");
+
+        printBoarder(true);
+
+        int row = (color == ChessGame.TeamColor.WHITE) ? 8 : 1;
+        int plusMinus = (color == ChessGame.TeamColor.WHITE) ? -1 : 1;
+        for (int sideNum = 8; sideNum > 0; sideNum--) {
+            System.out.print(SET_BG_COLOR_LIGHT_GREY + SET_TEXT_COLOR_BLACK + " " + (row) + " ");
+            String rowColor = (row % 2 == 0) ? SET_BG_COLOR_WHITE : SET_BG_COLOR_BLACK;
+            for (int col = 0; col < 8; col++) {
+                String squareColor = (col % 2 == 0) ? SET_BG_COLOR_WHITE : SET_BG_COLOR_BLACK;
+            }
+
+
+            System.out.print(SET_BG_COLOR_LIGHT_GREY + SET_TEXT_COLOR_BLACK + " " + (row) + " " + ln);
+            row = row + plusMinus;
+        }
+
+    }
+
     public static void printInitialBoard(ChessGame.TeamColor color) {
         System.out.println(RESET_BG_COLOR + RESET_TEXT_COLOR + RESET_TEXT_UNDERLINE);
         String ln = (RESET_BG_COLOR + "\n");
@@ -23,7 +74,7 @@ public class PrintGameBoard {
             printBoarder(true);
 
             int sideNum = 8;
-            String backRow = "RNBQKBRN";
+            String backRow = "RNBQKBNR";
             System.out.print(SET_BG_COLOR_LIGHT_GREY + SET_TEXT_COLOR_BLACK + " " + sideNum + " ");
             printBackRow(false, backRow, true);
             System.out.print(SET_BG_COLOR_LIGHT_GREY + SET_TEXT_COLOR_BLACK + " " + sideNum + " " + ln);
@@ -57,7 +108,7 @@ public class PrintGameBoard {
             printBoarder(false);
 
             int sideNum = 1;
-            String backRow = "RNBKQBRN";
+            String backRow = "RNBKQBNR";
             System.out.print(SET_BG_COLOR_LIGHT_GREY + SET_TEXT_COLOR_BLACK + " " + sideNum + " ");
             printBackRow(false, backRow, false);
             System.out.print(SET_BG_COLOR_LIGHT_GREY + SET_TEXT_COLOR_BLACK + " " + sideNum + " " + ln);
@@ -89,19 +140,6 @@ public class PrintGameBoard {
         }
         else {
             System.out.println("Initial Board Called without defined color");
-        }
-    }
-
-    static void printBoarder(Boolean white) {
-        String space = "   ";
-        String ln = (RESET_BG_COLOR + "\n");
-        if (!white) {
-            System.out.print(SET_BG_COLOR_LIGHT_GREY + SET_TEXT_COLOR_BLACK + space
-                    + " h  g  f  e  d  c  b  a " + space + ln);
-        }
-        else {
-            System.out.print(SET_BG_COLOR_LIGHT_GREY + SET_TEXT_COLOR_BLACK + space
-                    + " a  b  c  d  e  f  g  h " + space + ln);
         }
     }
 

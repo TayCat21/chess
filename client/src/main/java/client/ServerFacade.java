@@ -37,6 +37,12 @@ public class ServerFacade {
     }
 
     public List<ListGamesItem> getUpdatedGames() {
+        try {
+            listGames();
+        } catch (ClientException e) {
+            throw new RuntimeException(e);
+            // This may break a test -- Look into if problems
+        }
         return updatedGames;
     }
 
