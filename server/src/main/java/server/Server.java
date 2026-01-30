@@ -33,6 +33,8 @@ public class Server {
         javalin.put("/game", gameHandler::joinGame);
         javalin.delete("/db", this::clear);
 
+        javalin.get("/board", gameHandler::getBoard);
+
         javalin.exception(Exception.class, exceptionHandler::exceptions);
 
     }

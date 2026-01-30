@@ -1,5 +1,6 @@
 package service;
 
+import chess.ChessGame;
 import dataaccess.*;
 import model.*;
 
@@ -32,6 +33,12 @@ public class GameService {
         authenticateToken(authToken);
         String username = authDataAccess.getAuth(authToken).username();
         gameDataAccess.updateGame(joinGameRequest.playerColor(), username, joinGameRequest.gameID());
+    }
+
+    public GetBoardResult getBoard(String authToken, GetBoardRequest getBoardRequest) throws DataAccessException {
+        authenticateToken(authToken);
+        Gamedata game = gameDataAccess.getGame(getBoardRequest.gameID());
+        return new GetBoardResult(game);
     }
 
     public void clear() {
