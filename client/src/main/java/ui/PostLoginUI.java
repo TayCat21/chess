@@ -117,7 +117,7 @@ public class PostLoginUI {
                 server.observeGame(gameID);
             }
         } catch (Exception e) {
-            System.out.println("Couldn't connect to game");
+            System.out.println("Couldn't connect to game: " + e);
         }
         GameplayUI gameplayUI = new GameplayUI(server, currentGame, gameID, color);
         gameplayUI.run(observer);

@@ -34,11 +34,15 @@ public class WebsocketHandler implements WsConnectHandler, WsMessageHandler, WsC
     public void handleMessage(WsMessageContext ctx) {
         try {
             UserGameCommand action = new Gson().fromJson(ctx.message(), UserGameCommand.class);
-            PlayGameCommand play = new Gson().fromJson(ctx.message(), PlayGameCommand.class);
+            PlayGameCommand play;
+
             switch (action.getCommandType()) {
                 case CONNECT -> connect(action.getAuthToken(), action.getGameID(), ctx.session);
-                case CONNECT_PLAYER -> connectPlayer(play.getAuthToken(), play.getGameID(),
+                case CONNECT_PLAYER -> {
+                        play = new Gson().fromJson(ctx.message(), PlayGameCommand.class);
+                        connectPlayer(play.getAuthToken(), play.getGameID(),
                         play.getColor(), ctx.session);
+                        }
                 case MAKE_MOVE -> makeMove(action.getAuthToken(), action.getGameID(), ctx.session);
                 case LEAVE -> leaveGame(action.getAuthToken(), action.getGameID(), ctx.session);
                 case RESIGN -> resign(action.getAuthToken(), action.getGameID(), ctx.session);
@@ -78,6 +82,7 @@ public class WebsocketHandler implements WsConnectHandler, WsMessageHandler, WsC
             Authdata auth = authenticate(authToken);
             Gamedata game = gameDAO.getGame(gameID);
 
+            connections.addSession(gameID, session);
             String storedColorUser = (color == ChessGame.TeamColor.WHITE) ?
                     game.getWhiteUsername() : game.getBlackUsername();
             boolean trueUserColor = auth.username().equals(storedColorUser);
