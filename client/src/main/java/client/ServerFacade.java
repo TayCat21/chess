@@ -3,6 +3,7 @@ package client;
 import chess.ChessGame;
 import com.google.gson.Gson;
 import model.Gamedata;
+import websocket.commands.UserGameCommand;
 
 import java.net.*;
 import java.net.http.HttpClient;
@@ -16,6 +17,7 @@ import java.util.Map;
 public class ServerFacade {
 
     private static final HttpClient HTTP_CLIENT = HttpClient.newHttpClient();
+    WebsocketCommunicator ws;
     private String serverUrl;
     private String authToken;
     private List<ListGamesItem> updatedGames;
@@ -168,6 +170,35 @@ public class ServerFacade {
 
     private boolean isSuccessful(int status) {
         return status / 100 == 2;
+    }
+
+    public void connectWS() {
+        try {
+            ws = new WebsocketCommunicator(serverUrl);
+        } catch (Exception e) {
+            System.out.println("Couldn't connect to the Web server");
+        }
+    }
+
+    public void sendMessage(UserGameCommand command) throws Exception {
+        String msg = new Gson().toJson(command);
+        ws.sendMessage(msg);
+    }
+
+    public void leaveGame(int gameID) throws Exception {
+        sendMessage(new UserGameCommand(UserGameCommand.CommandType.LEAVE, authToken, gameID));
+    }
+
+    public void connectGame(int gameID) throws Exception {
+        sendMessage(new UserGameCommand(UserGameCommand.CommandType.CONNECT, authToken, gameID));
+    }
+
+    public void resign(int gameID) throws Exception {
+        sendMessage(new UserGameCommand(UserGameCommand.CommandType.RESIGN, authToken, gameID));
+    }
+
+    public void makeMove(int gameID) throws Exception {
+        sendMessage(new UserGameCommand(UserGameCommand.CommandType.MAKE_MOVE, authToken, gameID));
     }
 
 }

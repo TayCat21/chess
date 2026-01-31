@@ -74,7 +74,7 @@ public class PostLoginUI {
                         break;
                     }
                     var currentGame = printBoard(color, gameID);
-                    GameplayUI gameplayUI = new GameplayUI(server, currentGame);
+                    GameplayUI gameplayUI = new GameplayUI(server, currentGame, gameID, color);
                     gameplayUI.run();
                     break;
                 case "observe":

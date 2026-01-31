@@ -11,12 +11,13 @@ public class GameplayUI {
     ServerFacade server;
     ChessGame game;
     int gameID;
-    public static ChessGame.TeamColor color;
+    ChessGame.TeamColor color;
 
-    public GameplayUI(ServerFacade server, ChessGame currentGame) {
+    public GameplayUI(ServerFacade server, ChessGame currentGame, int gameID, ChessGame.TeamColor color) {
         this.server = server;
         this.game = currentGame;
-        // get ID & color
+        this.gameID = gameID;
+        this.color = color;
     }
 
     public void run() {
@@ -43,7 +44,11 @@ public class GameplayUI {
                 case "leave":
                     playing = false;
                     System.out.println("\nLeaving Game");
-//                    server.leave(gameID);
+                    try {
+                        server.leaveGame(gameID);
+                    } catch (Exception e) {
+                        System.out.println("Failed to leave the Game");
+                    }
                     break;
                 default:
                     System.out.println("Unknown Command -- Please try again");
