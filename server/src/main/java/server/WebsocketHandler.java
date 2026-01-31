@@ -42,7 +42,7 @@ public class WebsocketHandler implements WsConnectHandler, WsMessageHandler, WsC
                         play.getColor(), ctx.session);
                 case MAKE_MOVE -> makeMove(action.getAuthToken(), action.getGameID(), ctx.session);
                 case LEAVE -> leaveGame(action.getAuthToken(), action.getGameID(), ctx.session);
-                case RESIGN -> resign(aaction.getAuthToken(), action.getGameID(), ctx.session);
+                case RESIGN -> resign(action.getAuthToken(), action.getGameID(), ctx.session);
             }
         } catch (IOException ex) {
             ex.printStackTrace();
@@ -104,7 +104,18 @@ public class WebsocketHandler implements WsConnectHandler, WsMessageHandler, WsC
 
     private void makeMove(String authToken, int gameID, Session session) throws IOException {}
 
-    private void leaveGame(String authToken, int gameID, Session session) throws IOException {}
+    private void leaveGame(String authToken, int gameID, Session session) throws IOException {
+        try{
+            Authdata auth = authenticate(authToken);
+            connections.removeSession(gameID, session);
+            var message = String.format("%s has left the game", auth.username());
+            var notification = new NotificationMsg(message);
+            broadcastMsg(session, gameID, notification);
+
+        } catch (UnauthorizedResponse e) {
+            sendError(session, new ErrorMsg("Error: not authorized"));
+        }
+    }
 
     private void resign(String authToken, int gameID, Session session) throws IOException {}
 
