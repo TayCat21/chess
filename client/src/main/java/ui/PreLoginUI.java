@@ -68,6 +68,15 @@ public class PreLoginUI {
                 case "quit":
                     System.out.print(SET_TEXT_COLOR_YELLOW);
                     return;
+
+                case "clear":
+                    try {
+                        server.clear();
+                    } catch (ClientException e) {
+                        System.out.println("Couldn't clear cache: " + e);
+                    }
+                    System.out.println("cache cleared");
+                    break;
                 default:
                     System.out.println("Unknown Command -- Please try again");
                     printHelp("menu");
