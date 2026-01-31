@@ -2,6 +2,7 @@ package client;
 
 import chess.ChessGame;
 import com.google.gson.Gson;
+import model.Gamedata;
 
 import java.net.*;
 import java.net.http.HttpClient;
@@ -90,6 +91,13 @@ public class ServerFacade {
     public ChessGame joinGame(int gameID, String playerColor) throws ClientException {
         var body = Map.of("gameID", gameID, "playerColor", playerColor);
         var request = buildRequest("PUT", "/game", body, getUserAuth());
+        var response = sendRequest(request);
+        return handleResponse(response, ChessGame.class);
+    }
+
+    public ChessGame getBoard(int gameID) throws ClientException {
+        var body = Map.of("gameID", gameID);
+        var request = buildRequest("GET", "/board", body, getUserAuth());
         var response = sendRequest(request);
         return handleResponse(response, ChessGame.class);
     }
