@@ -110,7 +110,12 @@ public class PostLoginUI {
         ChessGame currentGame = printBoard(color, gameID);
         server.connectWS();
         try {
-            server.connectGame(gameID);
+            if (!observer) {
+                server.playGame(gameID, color);
+            }
+            else {
+                server.observeGame(gameID);
+            }
         } catch (Exception e) {
             System.out.println("Couldn't connect to game");
         }

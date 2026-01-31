@@ -3,6 +3,7 @@ package client;
 import chess.ChessGame;
 import com.google.gson.Gson;
 import model.Gamedata;
+import websocket.commands.PlayGameCommand;
 import websocket.commands.UserGameCommand;
 
 import java.net.*;
@@ -189,7 +190,11 @@ public class ServerFacade {
         sendMessage(new UserGameCommand(UserGameCommand.CommandType.LEAVE, authToken, gameID));
     }
 
-    public void connectGame(int gameID) throws Exception {
+    public void playGame(int gameID, ChessGame.TeamColor color) throws Exception {
+        sendMessage(new PlayGameCommand(UserGameCommand.CommandType.CONNECT_PLAYER, authToken, gameID, color));
+    }
+
+    public void observeGame(int gameID) throws Exception {
         sendMessage(new UserGameCommand(UserGameCommand.CommandType.CONNECT, authToken, gameID));
     }
 

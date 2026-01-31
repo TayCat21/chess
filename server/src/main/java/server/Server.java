@@ -20,7 +20,7 @@ public class Server {
     UserHandler userHandler = new UserHandler(userService);
     GameHandler gameHandler = new GameHandler(gameService);
 
-    WebsocketHandler webSocketHandler = new WebsocketHandler();
+    WebsocketHandler webSocketHandler = new WebsocketHandler(authDAO, gameDAO);
     ExceptionHandler exceptionHandler = new ExceptionHandler();
 
     public Server() {
@@ -61,4 +61,5 @@ public class Server {
         gameService.clear();
         ResponseUtil.success(context);
     }
+
 }
