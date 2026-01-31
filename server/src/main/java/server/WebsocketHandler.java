@@ -12,8 +12,6 @@ import model.Gamedata;
 import websocket.commands.*;
 import org.eclipse.jetty.websocket.api.Session;
 import websocket.messages.*;
-
-import javax.management.Notification;
 import javax.swing.*;
 import java.io.IOException;
 
@@ -57,10 +55,22 @@ public class WebsocketHandler implements WsConnectHandler, WsMessageHandler, WsC
     }
 
     private void connect(String authToken, int gameID, Session session) throws IOException {
-        connections.addSession(gameID, session);
-        var message = String.format("%s is in the shop", visitorName);
-        var notification = new Notification(Notification.Type.ARRIVAL, message);
-        connections.broadcast(session, notification);
+        try {
+            Authdata auth = authenticate(authToken);
+            Gamedata game = gameDAO.getGame(gameID);
+
+            connections.addSession(gameID, session);
+            var message = String.format("%s joined the game as an observer", auth.username());
+            var notification = new NotificationMsg(message);
+            broadcastMsg(session, gameID, notification);
+            LoadGame loadGame = new LoadGame(game.getGame());
+            sendMsg(session, loadGame);
+
+        } catch (UnauthorizedResponse e) {
+        sendError(session, new ErrorMsg("Error: not authorized"));
+    } catch (DataAccessException e) {
+        sendError(session, new ErrorMsg("Error: game not valid"));
+    }
     }
 
     private void connectPlayer(String authToken, int gameID, ChessGame.TeamColor color,
@@ -81,15 +91,22 @@ public class WebsocketHandler implements WsConnectHandler, WsMessageHandler, WsC
             connections.addSession(gameID, session);
             var message = String.format("%s joined the game as %s", auth.username(), color.toString());
             var notification = new NotificationMsg(message);
-            broadcastMsg(session, notification);
-
+            broadcastMsg(session, gameID, notification);
+            LoadGame loadGame = new LoadGame(game.getGame());
+            sendMsg(session, loadGame);
 
         } catch (UnauthorizedResponse e) {
-            throw new RuntimeException(e);
+            sendError(session, new ErrorMsg("Error: not authorized"));
         } catch (DataAccessException e) {
-            throw new RuntimeException(e);
+            sendError(session, new ErrorMsg("Error: game not valid"));
         }
     }
+
+    private void makeMove(String authToken, int gameID, Session session) throws IOException {}
+
+    private void leaveGame(String authToken, int gameID, Session session) throws IOException {}
+
+    private void resign(String authToken, int gameID, Session session) throws IOException {}
 
     private Authdata authenticate(String authToken) {
         try {
@@ -103,9 +120,9 @@ public class WebsocketHandler implements WsConnectHandler, WsMessageHandler, WsC
         }
     }
 
-    public void broadcastMsg(Session thisSession, NotificationMsg notification) throws IOException {
+    public void broadcastMsg(Session thisSession, int gameID, NotificationMsg notification) throws IOException {
         String msg = notification.toString();
-        for (Session c : connections.values()) {
+        for (Session c : connections.getSessions(gameID)) {
             if (c.isOpen()) {
                 if (!c.equals(thisSession)) {
                     c.getRemote().sendString(msg);
@@ -114,8 +131,22 @@ public class WebsocketHandler implements WsConnectHandler, WsMessageHandler, WsC
         }
     }
 
+    public void broadcastAll(int gameID, NotificationMsg notification) throws IOException {
+        String msg = notification.toString();
+        for (Session c : connections.getSessions(gameID)) {
+            if (c.isOpen()) {
+                c.getRemote().sendString(msg);
+            }
+        }
+    }
+
     private void sendError(Session session, ErrorMsg error) throws IOException {
         String message = new Gson().toJson(error);
+        session.getRemote().sendString(message);
+    }
+
+    private void sendMsg(Session session, ServerMessage msg) throws IOException {
+        String message = new Gson().toJson(msg);
         session.getRemote().sendString(message);
     }
 
