@@ -34,6 +34,7 @@ public class GameplayUI {
                     printHelp();
                     break;
                 case "redraw":
+                    PrintGameBoard.printBoard(color);
                     break;
                 case "move":
                     break;

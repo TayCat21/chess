@@ -77,7 +77,7 @@ public class PostLoginUI {
                         break;
                     }
                     printBoard(ChessGame.TeamColor.WHITE, observeID);
-                    System.out.println("You have entered this game as an observer");
+                    System.out.println(SET_TEXT_COLOR_LIGHT_GREY + "You have entered this game as an observer");
                     enterGame(observeID, ChessGame.TeamColor.WHITE, true);
                     break;
                 case "list":
@@ -178,20 +178,18 @@ public class PostLoginUI {
         var currentGame = gamesList.get(gameID-1);
         try {
             var game = server.getBoard(currentGame.gameID());
-            System.out.println(game);
 
-
-        System.out.print("\n          ");
-        System.out.println(SET_TEXT_COLOR_GREEN + SET_TEXT_UNDERLINE + currentGame.gameName());
-        new PrintGameBoard(game);
-        PrintGameBoard.printBoard(color);
-        System.out.println(RESET_TEXT_COLOR + RESET_BG_COLOR);
-            return game;
-        } catch (ClientException e) {
-            System.out.println("getBoard Error: " + e);
+            System.out.print("\n          ");
+            System.out.println(SET_TEXT_COLOR_GREEN + SET_TEXT_UNDERLINE + currentGame.gameName());
+    //        new PrintGameBoard(game);
+    //        PrintGameBoard.printBoard(color);
+            System.out.println(RESET_TEXT_COLOR + RESET_BG_COLOR);
+                return game;
+            } catch (ClientException e) {
+                System.out.println("getBoard Error: " + e);
+            }
+                return null;
         }
-            return null;
-    }
 
     private void handleCreate(String gameName) {
         try {
