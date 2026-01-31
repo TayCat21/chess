@@ -12,7 +12,6 @@ import model.Gamedata;
 import websocket.commands.*;
 import org.eclipse.jetty.websocket.api.Session;
 import websocket.messages.*;
-import javax.swing.*;
 import java.io.IOException;
 
 public class WebsocketHandler implements WsConnectHandler, WsMessageHandler, WsCloseHandler {
@@ -63,7 +62,7 @@ public class WebsocketHandler implements WsConnectHandler, WsMessageHandler, WsC
             var message = String.format("%s joined the game as an observer", auth.username());
             var notification = new NotificationMsg(message);
             broadcastMsg(session, gameID, notification);
-            LoadGame loadGame = new LoadGame(game.getGame());
+            LoadGame loadGame = new LoadGame(game.getGame(), ChessGame.TeamColor.WHITE);
             sendMsg(session, loadGame);
 
         } catch (UnauthorizedResponse e) {
@@ -92,7 +91,7 @@ public class WebsocketHandler implements WsConnectHandler, WsMessageHandler, WsC
             var message = String.format("%s joined the game as %s", auth.username(), color.toString());
             var notification = new NotificationMsg(message);
             broadcastMsg(session, gameID, notification);
-            LoadGame loadGame = new LoadGame(game.getGame());
+            LoadGame loadGame = new LoadGame(game.getGame(), color);
             sendMsg(session, loadGame);
 
         } catch (UnauthorizedResponse e) {
