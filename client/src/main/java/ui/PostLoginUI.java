@@ -34,12 +34,7 @@ public class PostLoginUI {
                         printHelp("create");
                         break;
                     }
-                    try {
-                        server.createGame(userInput[1]);
-                        System.out.printf("Created Game: %s%n", userInput[1]);
-                    } catch (ClientException e) {
-                        System.out.println(e.getMessage());
-                    }
+                    handleCreate(userInput[1]);
                     break;
                 case "join":
                     if (userInput.length != 3) {
@@ -54,14 +49,8 @@ public class PostLoginUI {
                         break;
                     }
                     String colorChoice = userInput[2].toUpperCase();
-                    ChessGame.TeamColor color;
-                    if (colorChoice.equals("WHITE")) {
-                        color = ChessGame.TeamColor.WHITE;
-                    }
-                    else if (colorChoice.equals("BLACK")) {
-                        color = ChessGame.TeamColor.BLACK;
-                    }
-                    else {
+                    ChessGame.TeamColor color = validColor(colorChoice);
+                    if (colorChoice == null) {
                         System.out.println("Color Selection not recognized. Select either"
                                 + SET_TEXT_COLOR_BLUE + " WHITE" + SET_TEXT_COLOR_LIGHT_GREY + " or"
                                 + SET_TEXT_COLOR_BLUE + " BLACK" + SET_TEXT_COLOR_LIGHT_GREY);
@@ -73,9 +62,7 @@ public class PostLoginUI {
                         System.out.println(e.getMessage());
                         break;
                     }
-                    var currentGame = printBoard(color, gameID);
-                    GameplayUI gameplayUI = new GameplayUI(server, currentGame, gameID, color);
-                    gameplayUI.run();
+                    enterGame(gameID, color, false);
                     break;
                 case "observe":
                     if (userInput.length != 2) {
@@ -90,6 +77,8 @@ public class PostLoginUI {
                         break;
                     }
                     printBoard(ChessGame.TeamColor.WHITE, observeID);
+                    System.out.println("You have entered this game as an observer");
+                    enterGame(observeID, ChessGame.TeamColor.WHITE, true);
                     break;
                 case "list":
                     doList();
@@ -117,6 +106,18 @@ public class PostLoginUI {
         }
     }
 
+    private void enterGame(int gameID, ChessGame.TeamColor color, Boolean observer) {
+        ChessGame currentGame = printBoard(color, gameID);
+        server.connectWS();
+        try {
+            server.connectGame(gameID);
+        } catch (Exception e) {
+            System.out.println("Couldn't connect to game");
+        }
+        GameplayUI gameplayUI = new GameplayUI(server, currentGame, gameID, color);
+        gameplayUI.run(observer);
+    }
+
     private void doList() {
         try {
             server.listGames();
@@ -132,6 +133,20 @@ public class PostLoginUI {
         } catch (ClientException e) {
             System.out.println("Couldn't List Games: " + e.getMessage());
         }
+    }
+
+    private ChessGame.TeamColor validColor(String colorChoice) {
+        ChessGame.TeamColor color;
+        if (colorChoice.equals("WHITE")) {
+            color = ChessGame.TeamColor.WHITE;
+        }
+        else if (colorChoice.equals("BLACK")) {
+            color = ChessGame.TeamColor.BLACK;
+        }
+        else {
+            color = null;
+        }
+        return color;
     }
 
     private int validID(String gameID) {
@@ -171,6 +186,15 @@ public class PostLoginUI {
             System.out.println("getBoard Error: " + e);
         }
             return null;
+    }
+
+    private void handleCreate(String gameName) {
+        try {
+            server.createGame(gameName);
+            System.out.printf("Created Game: %s%n", gameName);
+        } catch (ClientException e) {
+            System.out.println(e.getMessage());
+        }
     }
 
     private void printHelp(String output) {

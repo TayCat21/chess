@@ -20,7 +20,7 @@ public class GameplayUI {
         this.color = color;
     }
 
-    public void run() {
+    public void run(Boolean observer) {
         boolean playing = true;
         System.out.println(RESET_TEXT_COLOR + RESET_BG_COLOR);
 

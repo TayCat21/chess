@@ -19,6 +19,8 @@ public class Server {
 
     UserHandler userHandler = new UserHandler(userService);
     GameHandler gameHandler = new GameHandler(gameService);
+
+    WebsocketHandler webSocketHandler = new WebsocketHandler();
     ExceptionHandler exceptionHandler = new ExceptionHandler();
 
     public Server() {
@@ -34,6 +36,12 @@ public class Server {
         javalin.delete("/db", this::clear);
 
         javalin.get("/board", gameHandler::getBoard);
+
+        javalin.ws("/ws", ws -> {
+            ws.onConnect(webSocketHandler);
+            ws.onMessage(webSocketHandler);
+            ws.onClose(webSocketHandler);
+        });
 
         javalin.exception(Exception.class, exceptionHandler::exceptions);
 
