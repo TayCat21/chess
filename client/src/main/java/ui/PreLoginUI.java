@@ -75,7 +75,7 @@ public class PreLoginUI {
                     } catch (ClientException e) {
                         System.out.println("Couldn't clear cache: " + e);
                     }
-                    System.out.println("cache cleared");
+                    System.out.println("all cache cleared");
                     break;
                 default:
                     System.out.println("Unknown Command -- Please try again");

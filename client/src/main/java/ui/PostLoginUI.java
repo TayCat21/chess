@@ -153,7 +153,7 @@ public class PostLoginUI {
         return 0;
     }
 
-    private ListGamesItem printBoard(ChessGame.TeamColor color, int gameID) {
+    private ChessGame printBoard(ChessGame.TeamColor color, int gameID) {
         List<ListGamesItem> gamesList = server.getUpdatedGames();
         var currentGame = gamesList.get(gameID-1);
         try {
@@ -166,11 +166,11 @@ public class PostLoginUI {
         new PrintGameBoard(game);
         PrintGameBoard.printBoard(color);
         System.out.println(RESET_TEXT_COLOR + RESET_BG_COLOR);
+            return game;
         } catch (ClientException e) {
             System.out.println("getBoard Error: " + e);
         }
-
-        return currentGame;
+            return null;
     }
 
     private void printHelp(String output) {

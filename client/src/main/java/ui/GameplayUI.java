@@ -9,11 +9,14 @@ import java.util.Scanner;
 
 public class GameplayUI {
     ServerFacade server;
-    ListGamesItem currentGame;
+    ChessGame game;
+    int gameID;
+    public static ChessGame.TeamColor color;
 
-    public GameplayUI(ServerFacade server, ListGamesItem currentGame) {
+    public GameplayUI(ServerFacade server, ChessGame currentGame) {
         this.server = server;
-        this.currentGame = currentGame;
+        this.game = currentGame;
+        // get ID & color
     }
 
     public void run() {
@@ -29,17 +32,18 @@ public class GameplayUI {
                 case "help":
                     printHelp();
                     break;
-                case "redraw chess board":
+                case "redraw":
+                    break;
+                case "move":
+                    break;
+                case "resign":
+                    break;
+                case "highlight":
                     break;
                 case "leave":
                     playing = false;
                     System.out.println("\nLeaving Game");
-                    break;
-                case "make move":
-                    break;
-                case "resign":
-                    break;
-                case "highlight legal moves":
+//                    server.leave(gameID);
                     break;
                 default:
                     System.out.println("Unknown Command -- Please try again");
@@ -50,11 +54,11 @@ public class GameplayUI {
     }
 
     private void printHelp() {
-        System.out.println(SET_TEXT_COLOR_BLUE + "make move" +
-                SET_TEXT_COLOR_LIGHT_GREY + " - to play a chess piece");
-        System.out.println(SET_TEXT_COLOR_BLUE + "highlight legal moves" +
-                SET_TEXT_COLOR_LIGHT_GREY + " - to view possible moves for a piece");
-        System.out.println(SET_TEXT_COLOR_BLUE + "redraw chess board" +
+        System.out.println(SET_TEXT_COLOR_BLUE + "move" +
+                SET_TEXT_COLOR_LIGHT_GREY + " - to move a chess piece");
+        System.out.println(SET_TEXT_COLOR_BLUE + "highlight" +
+                SET_TEXT_COLOR_LIGHT_GREY + " - to highlight  legal moves for a piece");
+        System.out.println(SET_TEXT_COLOR_BLUE + "redraw" +
                 SET_TEXT_COLOR_LIGHT_GREY + " - to display current board state");
         System.out.println(SET_TEXT_COLOR_BLUE + "resign" +
                 SET_TEXT_COLOR_LIGHT_GREY + " - to forfeit the game");
