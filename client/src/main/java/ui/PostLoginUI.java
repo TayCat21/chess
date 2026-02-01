@@ -76,8 +76,7 @@ public class PostLoginUI {
                         System.out.println(SET_TEXT_COLOR_BLUE + "list" + SET_TEXT_COLOR_LIGHT_GREY);
                         break;
                     }
-                    printBoard(ChessGame.TeamColor.WHITE, observeID);
-                    System.out.println(SET_TEXT_COLOR_LIGHT_GREY + "You have entered this game as an observer");
+                    System.out.println(SET_TEXT_COLOR_LIGHT_GREY + "\nYou have entered this game as an observer");
                     enterGame(observeID, ChessGame.TeamColor.WHITE, true);
                     break;
                 case "list":
@@ -181,9 +180,9 @@ public class PostLoginUI {
 
             System.out.print("\n          ");
             System.out.println(SET_TEXT_COLOR_GREEN + SET_TEXT_UNDERLINE + currentGame.gameName());
-    //        new PrintGameBoard(game);
-    //        PrintGameBoard.printBoard(color);
-            System.out.println(RESET_TEXT_COLOR + RESET_BG_COLOR);
+            new PrintGameBoard(game);
+            PrintGameBoard.printBoard(color);
+            System.out.print(RESET_TEXT_COLOR + RESET_BG_COLOR + RESET_TEXT_UNDERLINE);
                 return game;
             } catch (ClientException e) {
                 System.out.println("getBoard Error: " + e);

@@ -24,7 +24,7 @@ public class GameplayUI {
         boolean playing = true;
         System.out.println(RESET_TEXT_COLOR + RESET_BG_COLOR);
 
-        while (playing) {
+        while (playing && !observer) {
             Scanner scanner = new Scanner(System.in);
             System.out.print(SET_TEXT_COLOR_WHITE + "\n[GAMEPLAY] >>> " + SET_TEXT_COLOR_LIGHT_GREY);
             String[] userInput = scanner.nextLine().split(" ");
@@ -55,6 +55,23 @@ public class GameplayUI {
                     System.out.println("Unknown Command -- Please try again");
                     printHelp();
                     break;
+            }
+        }
+        while (playing) {
+            Scanner scanner = new Scanner(System.in);
+            System.out.print(SET_TEXT_COLOR_WHITE + "\n[OBSERVER] >>> " + SET_TEXT_COLOR_LIGHT_GREY);
+            String[] userInput = scanner.nextLine().split(" ");
+
+            if (userInput[0].toLowerCase().equals("leave")) {
+                playing = false;
+                System.out.println("\nLeaving Game");
+                try {
+                    server.leaveGame(gameID);
+                } catch (Exception e) {
+                    System.out.println("Failed to leave the Game");
+                }
+            } else {
+                System.out.println("If you wish to leave game type " + SET_TEXT_COLOR_BLUE + "leave");
             }
         }
     }
