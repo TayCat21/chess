@@ -106,6 +106,14 @@ public class ServerFacade {
         return handleResponse(response, ChessGame.class);
     }
 
+
+    public void removePlayer(int gameID, ChessGame.TeamColor playerColor) throws ClientException {
+        var body = Map.of("gameID", gameID, "playerColor", playerColor);
+        var request = buildRequest("GET", "/board", body, getUserAuth());
+        var response = sendRequest(request);
+        handleResponse(response, ChessGame.class);
+    }
+
     public void clear() throws ClientException {
         var request = buildRequest("DELETE", "/db", null, null);
         var response = sendRequest(request);

@@ -66,6 +66,27 @@ public class GameHandler {
         ResponseUtil.success(context);
     }
 
+    public void removePlayer(@NotNull Context context) throws DataAccessException {
+        String authToken = context.header("authorization");
+        authenticateToken(authToken);
+
+        var serializer = new Gson();
+        RemovePlayerRequest requestBody;
+        try {
+            requestBody = serializer.fromJson(context.body(), RemovePlayerRequest.class);
+        } catch (Exception e) {
+            throw new DataAccessException("bad request");
+        }
+
+        if (requestBody == null) {
+            throw new DataAccessException("bad request");
+        }
+
+        gameService.removePlayer(authToken, requestBody);
+        ResponseUtil.success(context);
+    }
+
+
     public void getBoard(@NotNull Context context) throws DataAccessException {
         String authToken = context.header("authorization");
         authenticateToken(authToken);

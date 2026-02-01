@@ -111,6 +111,7 @@ public class GameplayUI {
                 System.out.println("\nLeaving Game");
                 try {
                     server.leaveGame(gameID);
+                    server.removePlayer(gameID, color);
                 } catch (Exception e) {
                     System.out.println("Error: Failed to leave the Game");
                 }

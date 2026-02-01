@@ -35,6 +35,11 @@ public class GameService {
         gameDataAccess.updateGame(joinGameRequest.playerColor(), username, joinGameRequest.gameID());
     }
 
+    public void removePlayer(String authToken, RemovePlayerRequest removePlayerRequest) throws DataAccessException {
+        authenticateToken(authToken);
+        gameDataAccess.updateGame(removePlayerRequest.playerColor(), null, removePlayerRequest.gameID());
+    }
+
     public GetBoardResult getBoard(String authToken, GetBoardRequest getBoardRequest) throws DataAccessException {
         authenticateToken(authToken);
         Gamedata game = gameDataAccess.getGame(getBoardRequest.gameID());

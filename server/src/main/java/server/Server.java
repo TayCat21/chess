@@ -35,6 +35,8 @@ public class Server {
         javalin.put("/game", gameHandler::joinGame);
         javalin.delete("/db", this::clear);
 
+        javalin.delete("/player", gameHandler::removePlayer);
+
         javalin.get("/board", gameHandler::getBoard);
 
         javalin.ws("/ws", ws -> {
