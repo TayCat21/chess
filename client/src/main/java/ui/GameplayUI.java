@@ -1,6 +1,7 @@
 package ui;
 
 import chess.ChessGame;
+import chess.ChessPosition;
 import client.ClientException;
 import client.ListGamesItem;
 import client.ServerFacade;
@@ -12,6 +13,15 @@ public class GameplayUI {
     ChessGame game;
     int gameID;
     ChessGame.TeamColor color;
+    private boolean gameOver;
+
+    public boolean setGameOver(boolean gameOver) {
+        return this.gameOver = gameOver;
+    }
+
+    public boolean getGameOver() {
+        return gameOver;
+    }
 
     public GameplayUI(ServerFacade server, ChessGame currentGame, int gameID, ChessGame.TeamColor color) {
         this.server = server;
@@ -20,21 +30,31 @@ public class GameplayUI {
         this.color = color;
     }
 
+    public void waitSec() {
+        try {
+            Thread.sleep(3000);
+        } catch (InterruptedException e) {
+            System.out.print(SET_TEXT_COLOR_WHITE);
+        }
+    }
+
     public void run(Boolean observer) {
+        waitSec();
         boolean playing = true;
-        System.out.println(RESET_TEXT_COLOR + RESET_BG_COLOR);
+        System.out.print(RESET_TEXT_COLOR + RESET_BG_COLOR);
 
         while (playing && !observer) {
-            Scanner scanner = new Scanner(System.in);
+            System.out.print(RESET_TEXT_COLOR + RESET_BG_COLOR);
             System.out.print(SET_TEXT_COLOR_WHITE + "\n[GAMEPLAY] >>> " + SET_TEXT_COLOR_LIGHT_GREY);
+            Scanner scanner = new Scanner(System.in);
             String[] userInput = scanner.nextLine().split(" ");
 
             switch (userInput[0].toLowerCase()) {
                 case "help":
-                    printHelp();
+                    printHelp("menu");
                     break;
                 case "redraw":
-                    PrintGameBoard.printBoard(color);
+                    PrintGameBoard.printBoard(color, null);
                     break;
                 case "move":
                     break;
@@ -50,8 +70,18 @@ public class GameplayUI {
                     } else {
                         System.out.println("Forfiet Cancelled");
                     }
+                    waitSec();
                     break;
                 case "highlight":
+                    if (userInput.length == 2 && userInput[1].matches("[a-h][1-8]")) {
+                        ChessPosition position = new ChessPosition(userInput[1].charAt(1) - '0',
+                                userInput[1].charAt(0) - ('a' - 1));
+                        PrintGameBoard.printBoard(color, position);
+                    }
+                    else {
+                        System.out.println("Input a piece coordinate with the initial statement: (ex: 'b5')");
+                        printHelp("high");
+                    }
                     break;
                 case "leave":
                     playing = false;
@@ -64,7 +94,7 @@ public class GameplayUI {
                     break;
                 default:
                     System.out.println("Unknown Command -- Please try again");
-                    printHelp();
+                    printHelp("menu");
                     break;
             }
         }
@@ -82,24 +112,36 @@ public class GameplayUI {
                     System.out.println("Failed to leave the Game");
                 }
             } else {
-                System.out.println("If you wish to leave game type " + SET_TEXT_COLOR_BLUE + "leave");
+                System.out.println(SET_TEXT_COLOR_LIGHT_GREY + "If you wish to leave game type " + SET_TEXT_COLOR_BLUE + "leave");
             }
         }
     }
 
-    private void printHelp() {
-        System.out.println(SET_TEXT_COLOR_BLUE + "move" +
-                SET_TEXT_COLOR_LIGHT_GREY + " - to move a chess piece");
-        System.out.println(SET_TEXT_COLOR_BLUE + "highlight" +
-                SET_TEXT_COLOR_LIGHT_GREY + " - to highlight  legal moves for a piece");
-        System.out.println(SET_TEXT_COLOR_BLUE + "redraw" +
-                SET_TEXT_COLOR_LIGHT_GREY + " - to display current board state");
-        System.out.println(SET_TEXT_COLOR_BLUE + "resign" +
-                SET_TEXT_COLOR_LIGHT_GREY + " - to forfeit the game");
-        System.out.println(SET_TEXT_COLOR_BLUE + "leave" +
-                SET_TEXT_COLOR_LIGHT_GREY + " - to close the game");
-        System.out.println(SET_TEXT_COLOR_BLUE + "help" +
-                SET_TEXT_COLOR_LIGHT_GREY + " - to display possible commands");
+    private void printHelp(String output) {
+        String movePrint = (SET_TEXT_COLOR_BLUE + "move <from> <to>");
+        String highPrint = (SET_TEXT_COLOR_BLUE + "highlight <coordinate>");
+
+        switch (output) {
+            case "move":
+                System.out.println(movePrint);
+                break;
+            case "high":
+                System.out.println(highPrint);
+                break;
+            case "menu":
+                System.out.println(movePrint + SET_TEXT_COLOR_BLUE + "move <from> <to>" +
+                        SET_TEXT_COLOR_LIGHT_GREY + " - to move a chess piece");
+                System.out.println(highPrint + SET_TEXT_COLOR_BLUE + "highlight <coordinate>" +
+                        SET_TEXT_COLOR_LIGHT_GREY + " - to highlight  legal moves for a piece");
+                System.out.println(SET_TEXT_COLOR_BLUE + "redraw" +
+                        SET_TEXT_COLOR_LIGHT_GREY + " - to display current board state");
+                System.out.println(SET_TEXT_COLOR_BLUE + "resign" +
+                        SET_TEXT_COLOR_LIGHT_GREY + " - to forfeit the game");
+                System.out.println(SET_TEXT_COLOR_BLUE + "leave" +
+                        SET_TEXT_COLOR_LIGHT_GREY + " - to close the game");
+                System.out.println(SET_TEXT_COLOR_BLUE + "help" +
+                        SET_TEXT_COLOR_LIGHT_GREY + " - to display possible commands");
+        }
     }
 
 }

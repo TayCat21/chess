@@ -181,7 +181,6 @@ public class PostLoginUI {
             System.out.print("\n          ");
             System.out.println(SET_TEXT_COLOR_GREEN + SET_TEXT_UNDERLINE + currentGame.gameName());
             new PrintGameBoard(game);
-            PrintGameBoard.printBoard(color);
             System.out.print(RESET_TEXT_COLOR + RESET_BG_COLOR + RESET_TEXT_UNDERLINE);
                 return game;
             } catch (ClientException e) {

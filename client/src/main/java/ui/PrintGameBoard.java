@@ -1,8 +1,13 @@
 package ui;
 
 import chess.ChessGame;
+import chess.ChessMove;
 import chess.ChessPiece;
 import chess.ChessPosition;
+
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Objects;
 
 import static ui.EscapeSequences.*;
 
@@ -31,10 +36,17 @@ public class PrintGameBoard {
         }
     }
 
-    public static void printBoard(ChessGame.TeamColor color) {
+    public static void printBoard(ChessGame.TeamColor color, ChessPosition pickedPos) {
         System.out.println(RESET_BG_COLOR + RESET_TEXT_COLOR + RESET_TEXT_UNDERLINE);
         var board = game.getBoard();
         String ln = (RESET_BG_COLOR + "\n");
+        Collection<ChessMove> posHighlight = (pickedPos != null) ? game.validMoves(pickedPos) : null;
+        HashSet<ChessPosition> squareHighlight = HashSet.newHashSet(posHighlight != null ? posHighlight.size():0);
+        if (posHighlight != null) {
+            for (ChessMove start : posHighlight) {
+                squareHighlight.add(start.getEndPosition());
+            }
+        }
 
         printBoarder(color == ChessGame.TeamColor.WHITE);
 
@@ -47,7 +59,12 @@ public class PrintGameBoard {
             String opColor = (colorRow % 2 == 0) ? SET_BG_COLOR_BLACK : SET_BG_COLOR_WHITE;
             int col = (color == ChessGame.TeamColor.WHITE) ? 1 : 8;
             for (int colNum = 1; colNum <= 8; colNum++) {
+                ChessPosition currentSquare = new ChessPosition(row, col);
                 String squareColor = (colNum % 2 == 0) ? opColor : rowColor;
+                if (currentSquare.equals(pickedPos) || squareHighlight.contains(currentSquare)) {
+                    boolean mainPoint = (currentSquare.equals(pickedPos));
+                    squareColor = getHighlight(squareColor, mainPoint);
+                }
                 ChessPiece piece = board.getPiece(new ChessPosition(row, col));
                 String printSquare = getSquare(piece, squareColor);
                 System.out.print(printSquare);
@@ -67,6 +84,13 @@ public class PrintGameBoard {
         String pieceColor = pColorCheck(piece);
         String pieceType = pTypeCheck(piece);
         return (colorBG + pieceColor + pieceType);
+    }
+
+    public static String getHighlight(String ogColor, boolean startPos) {
+        if (startPos) {
+            return SET_BG_COLOR_BLUE;
+        }
+        return (Objects.equals(ogColor, SET_BG_COLOR_BLACK))?SET_BG_COLOR_DARK_GREEN:SET_BG_COLOR_GREEN;
     }
 
     public static String pColorCheck(ChessPiece piece) {

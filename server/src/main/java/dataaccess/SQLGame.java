@@ -8,7 +8,7 @@ import java.sql.*;
 import java.util.List;
 
 public class SQLGame implements GameDataAccess {
-    private int idCounter = 1;
+    private int idCounter = getIDCount();
 
     public SQLGame() {
         try {
@@ -22,11 +22,14 @@ public class SQLGame implements GameDataAccess {
         int idCount = 1;
         try {
             var result = listGames();
+            if (result == null) {
+                return 1;
+            }
             for (int i = 0; i < result.size(); i++) {
                 idCount++;
             }
         } catch (DataAccessException e) {
-            return 1;
+            System.out.println("ID COUNTING ERROR");
         }
         return idCount;
     }

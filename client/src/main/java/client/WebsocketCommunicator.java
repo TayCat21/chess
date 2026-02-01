@@ -13,11 +13,21 @@ public class WebsocketCommunicator extends Endpoint {
     Session session;
 
     public WebsocketCommunicator(String serverURL) throws Exception {
-        String url = serverURL.replace("http", "ws");
-        URI uri = new URI( url + "/ws");
-        WebSocketContainer container = ContainerProvider.getWebSocketContainer();
-        this.session = container.connectToServer(this, uri);
-        this.session.addMessageHandler((MessageHandler.Whole<String>) this::handleMessage);
+        try {
+            String url = serverURL.replace("http", "ws");
+            URI uri = new URI(url + "/ws");
+            WebSocketContainer container = ContainerProvider.getWebSocketContainer();
+            this.session = container.connectToServer(this, uri);
+            this.session.addMessageHandler(new MessageHandler.Whole<String>() {
+                @Override
+                public void onMessage(String message) {
+                    handleMessage(message);
+                }
+            });
+        } catch (Exception e) {
+            System.out.println("Websocket Error: " + e);
+            throw new Exception();
+        }
     }
 
     private void handleMessage(String message) {
@@ -40,13 +50,14 @@ public class WebsocketCommunicator extends Endpoint {
     }
 
     public void printMsg(String message) {
-        System.out.print(SET_TEXT_COLOR_DARK_GREY + SET_TEXT_ITALIC);
+        System.out.print(SET_TEXT_COLOR_YELLOW + SET_TEXT_ITALIC);
         System.out.println(message);
+        System.out.print(RESET_TEXT_COLOR + RESET_TEXT_ITALIC);
     }
 
     public void printGame(ChessGame.TeamColor color) {
         //update game
-        ui.PrintGameBoard.printBoard(color);
+        ui.PrintGameBoard.printBoard(color, null);
     }
 
     // This method must be overridden, but we don't have to do anything with it

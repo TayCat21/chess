@@ -163,21 +163,19 @@ public class WebsocketHandler implements WsConnectHandler, WsMessageHandler, WsC
     }
 
     public void broadcastMsg(Session thisSession, int gameID, NotificationMsg notification) throws IOException {
-        String msg = notification.toString();
         for (Session c : connections.getSessions(gameID)) {
             if (c.isOpen()) {
                 if (!c.equals(thisSession)) {
-                    c.getRemote().sendString(msg);
+                    sendMsg(c, notification);
                 }
             }
         }
     }
 
     public void broadcastAll(int gameID, NotificationMsg notification) throws IOException {
-        String msg = notification.toString();
         for (Session c : connections.getSessions(gameID)) {
             if (c.isOpen()) {
-                c.getRemote().sendString(msg);
+                sendMsg(c, notification);
             }
         }
     }
