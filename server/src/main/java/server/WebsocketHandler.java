@@ -1,6 +1,8 @@
 package server;
 
 import chess.ChessGame;
+import chess.ChessMove;
+import chess.InvalidMoveException;
 import com.google.gson.Gson;
 import dataaccess.AuthDataAccess;
 import dataaccess.DataAccessException;
@@ -35,6 +37,7 @@ public class WebsocketHandler implements WsConnectHandler, WsMessageHandler, WsC
         try {
             UserGameCommand action = new Gson().fromJson(ctx.message(), UserGameCommand.class);
             PlayGameCommand play;
+            MakeMoveCommand moves;
 
             switch (action.getCommandType()) {
                 case CONNECT -> connect(action.getAuthToken(), action.getGameID(), ctx.session);
@@ -43,7 +46,11 @@ public class WebsocketHandler implements WsConnectHandler, WsMessageHandler, WsC
                         connectPlayer(play.getAuthToken(), play.getGameID(),
                         play.getColor(), ctx.session);
                         }
-                case MAKE_MOVE -> makeMove(action.getAuthToken(), action.getGameID(), ctx.session);
+                case MAKE_MOVE -> {
+                    moves = new Gson().fromJson(ctx.message(), MakeMoveCommand.class);
+                    makeMove(moves.getAuthToken(), moves.getGameID(), moves.getColor(),
+                            moves.getMove(), moves, ctx.session);
+                }
                 case LEAVE -> leaveGame(action.getAuthToken(), action.getGameID(), ctx.session);
                 case RESIGN -> {
                     play = new Gson().fromJson(ctx.message(), PlayGameCommand.class);
@@ -109,7 +116,56 @@ public class WebsocketHandler implements WsConnectHandler, WsMessageHandler, WsC
         }
     }
 
-    private void makeMove(String authToken, int gameID, Session session) throws IOException {}
+    private void makeMove(String authToken, int gameID, ChessGame.TeamColor myColor,
+                          ChessMove move, MakeMoveCommand command, Session session) throws IOException {
+        try {
+            Authdata auth = authenticate(authToken);
+            Gamedata game = gameDAO.getGame(gameID);
+
+            if(game.game().getGameOver()) {
+                sendError(session, new ErrorMsg("Error: Game is over, no moves available"));
+                return;
+            }
+
+            if(game.game().getTeamTurn().equals(myColor)) {
+                game.game().makeMove(command.getMove());
+
+                NotificationMsg notification;
+                ChessGame.TeamColor opColor = (myColor == ChessGame.TeamColor.WHITE)?
+                        ChessGame.TeamColor.BLACK: ChessGame.TeamColor.WHITE;
+
+                if (game.game().isInCheck(opColor)) {
+                    var message = String.format("%s just placed %s in check!", auth.username(), opColor.toString());
+                    notification = new NotificationMsg(message);
+                }
+                else if (game.game().isInCheckmate(opColor)) {
+                    var message = String.format("%s just placed won Checkmate!", auth.username());
+                    notification = new NotificationMsg(message);
+                }
+                else if (game.game().isInStalemate(opColor)) {
+                    var message = String.format("Tie! %s just caused a stalemate!", auth.username());
+                    notification = new NotificationMsg(message);
+                }
+                else {
+                    var message = String.format("%s just made a move", auth.username());
+                    notification = new NotificationMsg(message);
+                }
+                broadcastMsg(session, gameID, notification);
+                LoadGame loadGame = new LoadGame(game.getGame(), myColor);
+                sendMsg(session, loadGame);
+            }
+            else {
+                sendError(session, new ErrorMsg("Error: it is the other team's turn"));
+            }
+
+        } catch (UnauthorizedResponse e) {
+            sendError(session, new ErrorMsg("Error: not authorized"));
+        } catch (DataAccessException e) {
+            sendError(session, new ErrorMsg("Error: game not valid"));
+        } catch (InvalidMoveException e) {
+            sendError(session, new ErrorMsg("Error: invalid move"));
+        }
+    }
 
     private void leaveGame(String authToken, int gameID, Session session) throws IOException {
         try{

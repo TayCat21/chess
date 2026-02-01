@@ -8,7 +8,7 @@ import java.sql.*;
 import java.util.List;
 
 public class SQLGame implements GameDataAccess {
-    private int idCounter = getIDCount();
+    private int idCounter = 1;
 
     public SQLGame() {
         try {

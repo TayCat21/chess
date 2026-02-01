@@ -1,8 +1,9 @@
 package client;
 
 import chess.ChessGame;
+import chess.ChessMove;
 import com.google.gson.Gson;
-import model.Gamedata;
+import websocket.commands.MakeMoveCommand;
 import websocket.commands.PlayGameCommand;
 import websocket.commands.UserGameCommand;
 
@@ -202,8 +203,8 @@ public class ServerFacade {
         sendMessage(new PlayGameCommand(UserGameCommand.CommandType.RESIGN, authToken, gameID, color));
     }
 
-    public void makeMove(int gameID) throws Exception {
-        sendMessage(new UserGameCommand(UserGameCommand.CommandType.MAKE_MOVE, authToken, gameID));
+    public void makeMove(int gameID, ChessGame.TeamColor color, ChessMove chessMove) throws Exception {
+        sendMessage(new MakeMoveCommand(UserGameCommand.CommandType.MAKE_MOVE, authToken, gameID, color, chessMove));
     }
 
 }
