@@ -198,8 +198,8 @@ public class ServerFacade {
         sendMessage(new UserGameCommand(UserGameCommand.CommandType.CONNECT, authToken, gameID));
     }
 
-    public void resign(int gameID) throws Exception {
-        sendMessage(new UserGameCommand(UserGameCommand.CommandType.RESIGN, authToken, gameID));
+    public void resign(int gameID, ChessGame.TeamColor color) throws Exception {
+        sendMessage(new PlayGameCommand(UserGameCommand.CommandType.RESIGN, authToken, gameID, color));
     }
 
     public void makeMove(int gameID) throws Exception {

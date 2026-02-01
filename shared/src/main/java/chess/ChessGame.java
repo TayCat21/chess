@@ -14,6 +14,7 @@ public class ChessGame {
 
     private TeamColor turnColor;
     private ChessBoard board;
+    private boolean gameOver;
 
     public ChessGame() {
         board = new ChessBoard();
@@ -192,6 +193,14 @@ public class ChessGame {
      */
     public boolean isInStalemate(TeamColor teamColor) {
         return !isInCheck(teamColor) && !containsAnyValidMoves(teamColor);
+    }
+
+    public boolean setGameOver(boolean gameOver) {
+        return this.gameOver = gameOver;
+    }
+
+    public boolean getGameOver() {
+        return gameOver;
     }
 
     public boolean containsAnyValidMoves(TeamColor teamColor) {

@@ -45,7 +45,10 @@ public class WebsocketHandler implements WsConnectHandler, WsMessageHandler, WsC
                         }
                 case MAKE_MOVE -> makeMove(action.getAuthToken(), action.getGameID(), ctx.session);
                 case LEAVE -> leaveGame(action.getAuthToken(), action.getGameID(), ctx.session);
-                case RESIGN -> resign(action.getAuthToken(), action.getGameID(), ctx.session);
+                case RESIGN -> {
+                    play = new Gson().fromJson(ctx.message(), PlayGameCommand.class);
+                    resign(play.getAuthToken(), play.getGameID(), play.getColor(), ctx.session);
+                }
             }
         } catch (IOException ex) {
             ex.printStackTrace();
@@ -121,7 +124,31 @@ public class WebsocketHandler implements WsConnectHandler, WsMessageHandler, WsC
         }
     }
 
-    private void resign(String authToken, int gameID, Session session) throws IOException {}
+    private void resign(String authToken, int gameID, ChessGame.TeamColor resignColor, Session session)
+            throws IOException {
+        try {
+            Authdata auth = authenticate(authToken);
+            Gamedata game = gameDAO.getGame(gameID);
+
+            String winningUser = (resignColor == ChessGame.TeamColor.WHITE) ? game.blackUsername() :
+                    game.whiteUsername();
+
+            if (game.game().getGameOver()) {
+                sendError(session, new ErrorMsg("Error: Game is already over"));
+                return;
+            }
+            game.game().setGameOver(true);
+
+            var message = String.format("%s forfeits the game. %s wins!", auth.username(), winningUser);
+            var notification = new NotificationMsg(message);
+            broadcastAll(gameID, notification);
+
+        } catch (UnauthorizedResponse e) {
+            sendError(session, new ErrorMsg("Error: not authorized"));
+        } catch (DataAccessException e) {
+            sendError(session, new ErrorMsg("Error: game not valid"));
+        }
+    }
 
     private Authdata authenticate(String authToken) {
         try {

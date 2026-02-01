@@ -39,6 +39,17 @@ public class GameplayUI {
                 case "move":
                     break;
                 case "resign":
+                    System.out.println("\nAre you sure you want to forfeit the game? (yes/no)");
+                    String[] response = scanner.nextLine().split(" ");
+                    if(response[0].equalsIgnoreCase("yes")) {
+                        try {
+                            server.resign(gameID, color);
+                        } catch (Exception e) {
+                            System.out.println("Error: Forfiet Failed");
+                        }
+                    } else {
+                        System.out.println("Forfiet Cancelled");
+                    }
                     break;
                 case "highlight":
                     break;
